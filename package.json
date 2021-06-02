@@ -1,0 +1,29 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "difference generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkolotovich/frontend-project-lvl2.git"
+  },
+  "keywords": [
+    "difference",
+    "generator"
+  ],
+  "bin": {
+    "gendiff": "gendiff.js"
+  },
+  "author": "Mike Kolotovich",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mkolotovich/frontend-project-lvl2/issues"
+  },
+  "homepage": "https://github.com/mkolotovich/frontend-project-lvl2#readme",
+  "dependencies": {
+    "commander": "^7.2.0"
+  }
+}
