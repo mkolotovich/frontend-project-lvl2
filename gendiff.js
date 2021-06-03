@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-const { program } = require('commander');
+import { program } from 'commander';
+
+import compareFiles from './compareFiles.js';
 
 program
   .description('Compares two configuration files and shows a difference.')
@@ -9,4 +11,7 @@ program
   .option('-f, --format [type]', 'output format')
   .arguments('<filepath1>')
   .arguments('<filepath2>')
+  .action((filepath1, filepath2) => {
+    console.log(compareFiles(filepath1, filepath2));
+  })
   .parse();

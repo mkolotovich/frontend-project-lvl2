@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "difference generator",
-  "main": "index.js",
+  "main": "gendiff.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,8 +22,10 @@
   "bugs": {
     "url": "https://github.com/mkolotovich/frontend-project-lvl2/issues"
   },
+  "type": "module",
   "homepage": "https://github.com/mkolotovich/frontend-project-lvl2#readme",
   "dependencies": {
-    "commander": "^7.2.0"
+    "commander": "^7.2.0",
+    "lodash": "^4.17.21"
   }
 }
