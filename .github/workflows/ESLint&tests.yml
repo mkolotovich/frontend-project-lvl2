@@ -1,4 +1,4 @@
-name: ESLint-check
+name: ESLint&tests-check
 
 # Run this workflow every time a new commit pushed to your repository
 on: push
@@ -24,5 +24,8 @@ jobs:
       - name: 'install'
         run: npm i
 
-      - name: 'test'
+      - name: 'lint'
         run: make lint
+
+      - name: 'test'
+        run: make test

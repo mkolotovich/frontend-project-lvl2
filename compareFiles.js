@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import _ from 'lodash';
 
 const compare = (a, b) => {
@@ -11,28 +10,25 @@ const compare = (a, b) => {
 };
 
 const compareFiles = (file1, file2) => {
-  const firstFile = JSON.parse(fs.readFileSync(file1, 'utf8'));
-  const secondFile = JSON.parse(fs.readFileSync(file2, 'utf8'));
+  const firstFile = JSON.parse(file1);
+  const secondFile = JSON.parse(file2);
   const entries = Object.entries(firstFile).sort();
   const entries1 = Object.entries(secondFile).sort();
-  const cb = (acc) => {
-    entries.map(([prop]) => entries1.map(([prop1, value1]) => {
-      if (_.has(firstFile, prop1) && firstFile[prop1] === value1) {
-        acc[`  ${prop1}`] = value1;
-      } else if (_.has(firstFile, prop1) && firstFile[prop1] !== value1) {
-        acc[`- ${prop1}`] = firstFile[prop1];
-        acc[`+ ${prop1}`] = value1;
-      } else if (!_.has(secondFile, prop)) {
-        acc[`- ${prop}`] = firstFile[prop];
-      } else {
-        acc[`+ ${prop1}`] = value1;
-      }
-      return acc;
-    }));
-    return acc;
-  };
-  const res = entries.reduce(cb, {});
-  const resultArray = Object.entries(res).sort(compare);
+  const result = {};
+  entries.map(([prop]) => entries1.map(([prop1, value1]) => {
+    if (_.has(firstFile, prop1) && firstFile[prop1] === value1) {
+      result[`  ${prop1}`] = value1;
+    } else if (_.has(firstFile, prop1) && firstFile[prop1] !== value1) {
+      result[`- ${prop1}`] = firstFile[prop1];
+      result[`+ ${prop1}`] = value1;
+    } else if (!_.has(secondFile, prop)) {
+      result[`- ${prop}`] = firstFile[prop];
+    } else {
+      result[`+ ${prop1}`] = value1;
+    }
+    return result;
+  }));
+  const resultArray = Object.entries(result).sort(compare);
   const sortedObject = Object.fromEntries(resultArray);
   const resultString = JSON.stringify(sortedObject, null, '  ');
   const resultValue = resultString.replace(/"/g, '').replace(/,/g, '');
