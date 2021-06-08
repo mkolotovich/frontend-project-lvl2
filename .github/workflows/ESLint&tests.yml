@@ -29,3 +29,5 @@ jobs:
 
       - name: 'test'
         run: make test
+        with:
+          cc-id: ${{ secrets.CC_ID }}
