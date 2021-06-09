@@ -10,19 +10,17 @@ const compare = (a, b) => {
 };
 
 const compareFiles = (file1, file2) => {
-  const firstFile = JSON.parse(file1);
-  const secondFile = JSON.parse(file2);
-  const entries = Object.entries(firstFile).sort();
-  const entries1 = Object.entries(secondFile).sort();
+  const entries = Object.entries(file1).sort();
+  const entries1 = Object.entries(file2).sort();
   const result = {};
   entries.map(([prop]) => entries1.map(([prop1, value1]) => {
-    if (_.has(firstFile, prop1) && firstFile[prop1] === value1) {
+    if (_.has(file1, prop1) && file1[prop1] === value1) {
       result[`  ${prop1}`] = value1;
-    } else if (_.has(firstFile, prop1) && firstFile[prop1] !== value1) {
-      result[`- ${prop1}`] = firstFile[prop1];
+    } else if (_.has(file1, prop1) && file1[prop1] !== value1) {
+      result[`- ${prop1}`] = file1[prop1];
       result[`+ ${prop1}`] = value1;
-    } else if (!_.has(secondFile, prop)) {
-      result[`- ${prop}`] = firstFile[prop];
+    } else if (!_.has(file2, prop)) {
+      result[`- ${prop}`] = file1[prop];
     } else {
       result[`+ ${prop1}`] = value1;
     }
