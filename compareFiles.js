@@ -10,10 +10,10 @@ const compare = (a, b) => {
 };
 
 const compareFiles = (file1, file2) => {
-  const entries = Object.entries(file1).sort();
-  const entries1 = Object.entries(file2).sort();
+  const entries1 = Object.entries(file1).sort();
+  const entries2 = Object.entries(file2).sort();
   const result = {};
-  entries.map(([prop]) => entries1.map(([prop1, value1]) => {
+  entries1.map(([prop]) => entries2.map(([prop1, value1]) => {
     if (_.has(file1, prop1) && file1[prop1] === value1) {
       result[`  ${prop1}`] = value1;
     } else if (_.has(file1, prop1) && file1[prop1] !== value1) {
