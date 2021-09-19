@@ -33,3 +33,8 @@ test('compareNestedJsonFiles', () => {
 //   expect(parseFiles('file1nested.yaml', 'file2nested.yaml'))
 //     .toEqual(fs.readFileSync(getFixturePath('expected_nested_file.txt'), 'utf-8'));
 // });
+
+test('compareNestedJsonFilesPlain', () => {
+  expect(parseFiles('file1nested.json', 'file2nested.json'))
+    .toEqual(fs.readFileSync(getFixturePath('expected_nested_file.txt'), 'utf-8'));
+});
