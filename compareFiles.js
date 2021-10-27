@@ -1,195 +1,146 @@
 import _ from 'lodash';
 
-const getKeys = (obj, obj1, keys, path) => {
+const getKeys = (obj, keys, path) => {
   let fullPath = path;
   const cb = ([key, value]) => {
-    if (_.has(obj, key) && _.has(obj1, key)) {
-      if (_.isObject(value) && _.isObject(obj1[key])) {
-        if (path === '') {
-          fullPath = key;
-        } else {
-          fullPath = `${path}.${key}`;
-        }
-        return getKeys(value, obj1[key], keys, fullPath);
-      } if (_.get(obj, key) !== _.get(obj1, key)) {
-        keys.add(`${path}.${key}`);
-      }
-      return [];
-    }
     if (!_.isObject(value)) {
       fullPath = `${path}.${key}`;
       keys.add(fullPath);
+    } else if (path === '') {
+      fullPath = key;
+      keys.add(key);
+      return getKeys(value, keys, fullPath);
     } else {
-      if (path === '') {
-        fullPath = key;
-      } else {
-        fullPath = `${path}.${key}`;
-      }
-      keys.add(fullPath);
+      keys.add(`${path}.${key}`);
+      return getKeys(value, keys, `${path}.${key}`);
     }
     return keys;
   };
+
   const objKeys = Object.entries(obj);
   objKeys.map((child) => cb(child));
   return keys;
 };
 
-// const structure = [];
+const structure = [];
 
-const makeDiff = (list, obj, file1, file2, path) => {
-  
-  let fullPath = path;
-  let entries;
-  if (!Array.isArray(obj)) {
-    entries = Object.entries(obj);
-  } else {
-    entries = obj;
+const makeDiff = (list, group, file1, file2) => {
+  if (list.length === 0) {
+    return structure;
   }
-  const [head, ...tail] = entries;
-  const [name, value] = head;
-  if (_.isObject(value)) {
-    if (path === '') {
-      fullPath = name;
+  let groupNumber = group;
+  const [head, ...tail] = list;
+  if (_.isObject(_.get(file1, head)) && _.isObject(_.get(file2, head))) {
+    if (head.includes('.')) {
+      const [...rest] = head.split('.');
+      const name = _.last(rest);
+      if (rest.length === 3) {
+        _.last(_.last(_.last(structure[group]))).push([name, 'unchanged', []]);
+      } else {
+        _.last(structure[group]).push([name, 'unchanged', []]);
+      }
     } else {
-      fullPath = `${path}.${name}`;
+      structure.push([head, 'unchanged', []]);
+      if (structure[group][0] !== head) {
+        groupNumber += 1;
+      }
     }
-    return [name, 'unchanged', makeDiff(list, value, file1, file2, fullPath)];
+    return makeDiff(tail, groupNumber, file1, file2);
   }
-  fullPath = `${path}.${name}`;
-  if (list.includes(fullPath) === false) {
-    return [[name, 'unchanged', value], ...makeDiff(list, tail, file1, file2, path)];
-  } if (_.has(file1, fullPath) && _.has(_.get(file2, path), name)) {
-    return [[name, 'changed', value, _.get(file2, `${path}.${name}`)], makeDiff(list, tail, file1, file2, path)];
+  const [...rest] = head.split('.');
+  const name = _.last(rest);
+  if (_.has(file1, head) && _.has(file2, head) && _.get(file1, head) === _.get(file2, head)) {
+    if (rest.length === 3) {
+      _.last(_.last(_.last(structure[group]))).push([name, 'unchanged', _.get(file2, head)]);
+    } else {
+      _.last(structure[group]).push([name, 'unchanged', _.get(file2, head)]);
+    }
+  } else if (_.has(file1, head) && _.has(file2, head)) {
+    if (rest.length === 4) {
+      _.last(_.last(_.last(_.last(_.last(structure[group]))))).push([name, 'changed', _.get(file1, head), _.get(file2, head)]);
+    } else if (_.isObject(_.get(file1, head))) {
+      _.last(structure[group]).push([name, 'changed', [], _.get(file2, head)]);
+    } else {
+      _.last(structure[group]).push([name, 'changed', _.get(file1, head), _.get(file2, head)]);
+    }
+  } else if (_.has(file2, head)) {
+    if (_.isObject(_.get(file2, head))) {
+      if (rest.length === 1) {
+        groupNumber += 1;
+        structure.push([head, 'added', _.get(file2, head)]);
+        return structure;
+      }
+      if (rest.length === 3) {
+        _.last(_.last(structure[group])).push([name, 'unchanged']);
+      } else {
+        const [path] = rest;
+        if (_.has(file1, path) && _.has(file2, path)) {
+          _.last(structure[group]).push([name, 'added', _.get(file2, head)]);
+          tail.shift();
+        } else {
+          _.last(structure[group]).push([name, 'unchanged']);
+        }
+      }
+    } else if (rest.length === 3) {
+      _.last(_.last(_.last(structure[group]))).push([name, 'added', _.get(file2, head)]);
+    } else if (rest.length === 4) {
+      _.last(_.last(_.last(structure[group]))).push([name, 'unchanged', _.get(file2, head)]);
+    } else {
+      const [path] = rest;
+      if (_.has(file1, path) && _.has(file2, path)) {
+        _.last(structure[group]).push([name, 'added', _.get(file2, head)]);
+      } else {
+        _.last(structure[group]).push([name, 'unchanged', _.get(file2, head)]);
+      }
+    }
+  } else if (_.has(file1, head)) {
+    const path = `${rest[0]}.${rest[1]}`;
+    if (_.has(file1, path) && _.has(file2, path)) {
+      _.last(_.last(structure[group]))[2].push(name, 'unchanged', _.get(file1, head));
+    } else {
+      if (rest.length === 1) {
+        groupNumber += 1;
+        structure.push([head, 'deleted', _.get(file1, head)]);
+        const filteredTail = tail.filter((item) => {
+          if (!item.includes(head)) {
+            return true;
+          }
+          return false;
+        });
+        return makeDiff(filteredTail, group, file1, file2);
+      }
+      if (_.isObject(_.get(file1, head))) {
+        _.last(structure[group]).push([name, 'unchanged']);
+      } else if (rest.length === 3) {
+        _.last(_.last(structure[group])).push([name, 'unchanged', _.get(file1, head)]);
+      } else {
+        _.last(structure[group]).push([name, 'deleted', _.get(file1, head)]);
+      }
+    }
   }
-  if (_.has(file1, fullPath)) {
-    return [[name, 'deleted', value], makeDiff(list, tail, file1, file2, path)];
-  }
-};
-
-// const makeDiff = (list, group, file1, file2) => {
-//   if (list.length === 0) {
-//     return structure;
-//   }
-//   const [head, ...tail] = list;
-//   if (_.isObject(_.get(file1, head)) && _.isObject(_.get(file2, head))) {
-//     if (head.includes('.')) {
-//       const [...rest] = head.split('.');
-//       const name = _.last(rest);
-//       if (rest.length === 3) {
-//         _.last(_.last(_.last(structure[group]))).push([name, 'unchanged', []]);
-//       } else {
-//         _.last(structure[group]).push([name, 'unchanged', []]);
-//       }
-//     } else {
-//       structure.push([head, 'unchanged', []]);
-//       if (structure[group][0] !== head) {
-//         group += 1;
-//       }
-//     }
-//     return makeDiff(tail, group, file1, file2);
-//   }
-//   const [...rest] = head.split('.');
-//   const name = _.last(rest);
-//   if (_.has(file1, head) && _.has(file2, head) && _.get(file1, head) === _.get(file2, head)) {
-//     if (rest.length === 3) {
-//       _.last(_.last(_.last(structure[group]))).push([name, 'unchanged', _.get(file2, head)]);
-//     } else {
-//       _.last(structure[group]).push([name, 'unchanged', _.get(file2, head)]);
-//     }
-//   } else if (_.has(file1, head) && _.has(file2, head)) {
-//     if (rest.length === 4) {
-//       _.last(_.last(_.last(_.last(_.last(structure[group]))))).push([name, 'changed', _.get(file1, head), _.get(file2, head)]);
-//     } else {
-//       if (_.isObject(_.get(file1, head))) {
-//         _.last(structure[group]).push([name, 'changed', [], _.get(file2, head)]);
-//       } else {
-//         _.last(structure[group]).push([name, 'changed', _.get(file1, head), _.get(file2, head)]);
-//       }
-//     }
-//   } else if (_.has(file2, head)) {
-//     if (_.isObject(_.get(file2, head))) {
-//       if (rest.length === 1) {
-//         group += 1;
-//         structure.push([head, 'added', _.get(file2, head)]);
-//         return structure;
-//       } else {
-//         if (rest.length === 3) {
-//           _.last(_.last(structure[group])).push([name, 'unchanged']);
-//         } else {
-//           const [path,] = rest;
-//           if (_.has(file1, path) && _.has(file2, path)) {
-//             _.last(structure[group]).push([name, 'added', _.get(file2, head)]);
-//             tail.shift();
-//           } else {
-//             _.last(structure[group]).push([name, 'unchanged']);
-//           }
-//         }
-//       }
-//     } else {
-//       if (rest.length === 3) {
-//         _.last(_.last(_.last(structure[group]))).push([name, 'added', _.get(file2, head)]);
-//       } else if (rest.length === 4) {
-//         _.last(_.last(_.last(structure[group]))).push([name, 'unchanged', _.get(file2, head)]);
-//       } else {
-//         const [path,] = rest;
-//         if (_.has(file1, path) && _.has(file2, path)) {
-//           _.last(structure[group]).push([name, 'added', _.get(file2, head)]);
-//         } else {
-//           _.last(structure[group]).push([name, 'unchanged', _.get(file2, head)]);
-//         }
-//       }
-//     }
-//   } else if (_.has(file1, head)) {
-//     const path = `${rest[0]}.${rest[1]}`;
-//     if (_.has(file1, path) && _.has(file2, path)) {
-//       _.last(_.last(structure[group]))[2].push(name, 'unchanged', _.get(file1, head));
-//     } else {
-//       if (rest.length === 1) {
-//         group += 1;
-//         structure.push([head, 'deleted', _.get(file1, head)]);
-//         const filteredTail = tail.filter((item) => {
-//           if (!item.includes(head)) {
-//             return item;
-//           }
-//         });
-//         return makeDiff(filteredTail, group, file1, file2);
-//       } else {
-//         if (_.isObject(_.get(file1, head))) {
-//           _.last(structure[group]).push([name, 'unchanged']);
-//         } else {
-//           if (rest.length === 3) {
-//             _.last(_.last(structure[group])).push([name, 'unchanged', _.get(file1, head)]);
-//           } else {
-//             _.last(structure[group]).push([name, 'deleted', _.get(file1, head)]);
-//           }
-//         }
-//       }
-//     }
-//   }
-//   return makeDiff(tail, group, file1, file2);
-// };
-
-const compareFiles = (file1, file2) => {
-  const keys1 = getKeys(file1, file2, new Set(), '');
-  const keys2 = getKeys(file2, file1, keys1, '');
-  const keysArray = Array.from(keys2);
-  const sortedKeys = keysArray.sort();
-  // const structre = makeDiff(sortedKeys, 0, file1, file2);
-  const structre = makeDiff(sortedKeys, file1, file1, file2, '');
-  stylish(structre);
-  return string;
+  return makeDiff(tail, group, file1, file2);
 };
 
 let string = '{\n';
+let plainString = '';
 let spaceSize = 2;
 
 const makeSpace = (size, space) => {
+  let spaceType = space;
   if (size > 0) {
-    space += ' ';
-    return makeSpace(size - 1, space);
+    spaceType += ' ';
+    return makeSpace(size - 1, spaceType);
   }
   return space;
 };
+
+const makeLine = (name, symbol) => {
+  string += `${makeSpace(spaceSize, '')}${symbol} ${name}: `;
+  string += '{\n';
+  spaceSize += 4;
+};
+
+const res = (stylish, children, tail) => stylish(children) + stylish(tail);
 
 const stylish = (tree) => {
   if (!Array.isArray(tree)) {
@@ -234,44 +185,30 @@ const stylish = (tree) => {
         string += `${makeSpace(spaceSize, '')}}`;
       }
     }
-    return;
+    return string;
   }
   if (tree.length === 0) {
     return string;
   }
   const [head, ...tail] = tree;
   const [name, type] = head;
+  const children = head[2];
   if (type === 'unchanged' && head[2] instanceof Array) {
-    string += `${makeSpace(spaceSize, '')}  ${name}: `;
-    const children = head[2];
-    string += `{\n`;
-    spaceSize += 4;
+    makeLine(name, ' ');
     return stylish(children) + stylish(tail);
-  } else if (type === 'added' && head[2] instanceof Object) {
-    string += `${makeSpace(spaceSize, '')}+ ${name}: `;
-    const children = head[2];
-    string += `{\n`;
-    spaceSize += 4;
-    stylish(children) + stylish(tail);
+  } if (type === 'added' && head[2] instanceof Object) {
+    makeLine(name, '+');
+    res(stylish, children, tail);
   } else if (type === 'deleted' && head[2] instanceof Object) {
-    string += `${makeSpace(spaceSize, '')}- ${name}: `;
-    const children = head[2];
-    string += `{\n`;
-    spaceSize += 4;
-    stylish(children) + stylish(tail);
+    makeLine(name, '-');
+    res(stylish, children, tail);
   } else if (type === 'added' && head[2] instanceof Array) {
     spaceSize += 2;
-    string += `${makeSpace(spaceSize, '')}+ ${name}: `;
-    const children = head[2];
-    string += `{\n`;
-    spaceSize += 4;
-    return stylish(children);
+    makeLine(name, '+');
+    res(stylish, children, tail);
   } else if (type === 'deleted' && head[2] instanceof Array) {
-    string += `${makeSpace(spaceSize, '')}- ${name}: `;
-    const children = head[2];
-    string += `{\n`;
-    spaceSize += 4;
-    return stylish(children);
+    makeLine(name, '-');
+    res(stylish, children, tail);
   } else if (type === 'added') {
     if (tail.length !== 0) {
       string += `${makeSpace(spaceSize, '')}+ ${name}: ${head[2]}\n`;
@@ -283,7 +220,7 @@ const stylish = (tree) => {
       string += `${makeSpace(spaceSize, '')}}\n`;
       spaceSize -= 2;
     }
-    return stylish(tail);
+    stylish(tail);
   } else if (type === 'unchanged') {
     string += `${makeSpace(spaceSize, '')}  ${name}: ${head[2]}\n`;
     stylish(tail);
@@ -313,6 +250,71 @@ const stylish = (tree) => {
     }
     stylish(tail);
   }
+  return string;
+};
+
+const plain = (tree, path) => {
+  if (tree.length === 0) {
+    return plainString;
+  }
+  const [head, ...tail] = tree;
+  const [name, type] = head;
+  let children;
+  let fullPath;
+  if (path === '') {
+    fullPath = name;
+  } else {
+    fullPath = `${path}.${name}`;
+  }
+  if (Array.isArray(head[2])) {
+    [,, children] = head;
+    if (head.length === 4) {
+      const [,,, newValue] = head;
+      plainString += `Property '${fullPath}' was updated. From [complex value] to '${newValue}'\n`;
+    }
+    return plain(children, fullPath) + plain(tail, path);
+  }
+  const [,, value, newValue] = head;
+  if (type === 'added') {
+    if (_.isObject(value)) {
+      if (tail.length === 0) {
+        plainString += `Property '${fullPath}' was ${type} with value: [complex value]`;
+      } else {
+        plainString += `Property '${fullPath}' was ${type} with value: [complex value]\n`;
+      }
+    } else if (typeof value === 'string') {
+      plainString += `Property '${fullPath}' was ${type} with value: '${value}'\n`;
+    } else {
+      plainString += `Property '${fullPath}' was ${type} with value: ${value}\n`;
+    }
+    return plain(tail, path);
+  } if (type === 'deleted') {
+    plainString += `Property '${fullPath}' was removed\n`;
+    return plain(tail, path);
+  } if (type === 'changed') {
+    if (typeof value === 'string') {
+      plainString += `Property '${fullPath}' was updated. From '${value}' to '${newValue}'\n`;
+    } else {
+      plainString += `Property '${fullPath}' was updated. From ${value} to ${newValue}\n`;
+    }
+    return plain(tail, path);
+  }
+  return plain(tail, path);
+};
+
+const compareFiles = (file1, file2, formatName) => {
+  const keys = new Set();
+  getKeys(file1, keys, '');
+  getKeys(file2, keys, '');
+  const keysArray = Array.from(keys);
+  const sortedKeys = keysArray.sort();
+  const structre = makeDiff(sortedKeys, 0, file1, file2);
+  if (formatName === 'plain') {
+    plain(structre, '');
+    return plainString;
+  }
+  stylish(structre);
+  return string;
 };
 
 export default compareFiles;
