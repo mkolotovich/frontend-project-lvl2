@@ -35,6 +35,6 @@ test('compareNestedJsonFiles', () => {
 // });
 
 // test('compareNestedJsonFilesPlain', () => {
-//   expect(parseFiles('file1nested.json', 'file2nested.json'))
+//   expect(parseFiles('file1nested.json', 'file2nested.json', 'plain'))
 //     .toEqual(fs.readFileSync(getFixturePath('expected_plain_file.txt'), 'utf-8'));
 // });
