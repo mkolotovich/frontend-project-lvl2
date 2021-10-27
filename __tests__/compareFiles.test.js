@@ -24,17 +24,17 @@ const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 
 //     .toEqual(fs.readFileSync(getFixturePath('expected_file.txt'), 'utf-8'));
 // });
 
-// test('compareNestedJsonFiles', () => {
-//   expect(parseFiles('file1nested.json', 'file2nested.json'))
-//     .toEqual(fs.readFileSync(getFixturePath('expected_nested_file.txt'), 'utf-8'));
-// });
+test('compareNestedJsonFiles', () => {
+  expect(parseFiles('file1nested.json', 'file2nested.json'))
+    .toEqual(fs.readFileSync(getFixturePath('expected_nested_file.txt'), 'utf-8'));
+});
 
 // test('compareNestedYamlFiles', () => {
 //   expect(parseFiles('file1nested.yaml', 'file2nested.yaml'))
 //     .toEqual(fs.readFileSync(getFixturePath('expected_nested_file.txt'), 'utf-8'));
 // });
 
-test('compareNestedJsonFilesPlain', () => {
-  expect(parseFiles('file1nested.json', 'file2nested.json'))
-    .toEqual(fs.readFileSync(getFixturePath('expected_plain_file.txt'), 'utf-8'));
-});
+// test('compareNestedJsonFilesPlain', () => {
+//   expect(parseFiles('file1nested.json', 'file2nested.json'))
+//     .toEqual(fs.readFileSync(getFixturePath('expected_plain_file.txt'), 'utf-8'));
+// });
