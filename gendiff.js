@@ -3,7 +3,6 @@
 import { program } from 'commander';
 import parseFiles from './parsers.js';
 
-let res;
 program
   .description('Compares two configuration files and shows a difference.')
   .version('0.0.1', '-V, --version', 'output the version number')
@@ -12,9 +11,7 @@ program
   .arguments('<filepath1>')
   .arguments('<filepath2>')
   .action((filepath1, filepath2) => {
-    res = parseFiles(filepath1, filepath2, program.opts().format);
+    console.log(parseFiles(filepath1, filepath2, program.opts().format));
   });
 
-program.parse();
-
-console.log(res);
+program.parse(program.args);
