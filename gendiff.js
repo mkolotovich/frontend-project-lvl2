@@ -12,6 +12,5 @@ program
   .arguments('<filepath2>')
   .action((filepath1, filepath2) => {
     console.log(parseFiles(filepath1, filepath2, program.opts().format));
-  });
-
-program.parse(program.args);
+  })
+  .parse();

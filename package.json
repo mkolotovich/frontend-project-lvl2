@@ -15,7 +15,7 @@
     "generator"
   ],
   "bin": {
-    "gendiff": "gendiff.js"
+    "gendiff": "compareFiles.js"
   },
   "author": "Mike Kolotovich",
   "license": "ISC",
