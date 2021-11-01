@@ -15,7 +15,7 @@
     "generator"
   ],
   "bin": {
-    "gendiff": "index.js"
+    "gendiff": "./formatters/index.js"
   },
   "author": "Mike Kolotovich",
   "license": "ISC",
