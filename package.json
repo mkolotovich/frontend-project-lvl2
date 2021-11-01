@@ -15,7 +15,7 @@
     "generator"
   ],
   "bin": {
-    "gendiff": "parsers.js"
+    "gendiff": "index.js"
   },
   "author": "Mike Kolotovich",
   "license": "ISC",
