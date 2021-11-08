@@ -78,7 +78,6 @@ const makeNode = (acc, node, file1, file2) => {
 
 const makeUpdatedNode = (acc, node, file1, file2) => {
   acc.children.push({
-    // name: node.slice(1),
     name: _.last(node.slice(1).split('.')),
     type: 'leaf',
     status: chooseType(node, file1, file2),
@@ -92,7 +91,6 @@ const makeLeaf = (acc, node, file1, file2) => {
     acc.children.map((item) => {
       if (node.includes(item.name)) {
         item.children.push({
-          // name: node.slice(1),
           name: _.last(node.slice(1).split('.')),
           type: 'leaf',
           status: chooseType(node, file1, file2),
@@ -103,7 +101,6 @@ const makeLeaf = (acc, node, file1, file2) => {
     });
   } else {
     _.last(_.last(acc.children).children).children.push({
-      // name: node.slice(1),
       name: _.last(node.slice(1).split('.')),
       type: 'leaf',
       status: chooseType(node, file1, file2),
@@ -118,7 +115,6 @@ const makeChangedLeaf = (acc, node, file1, file2) => {
     acc.children.map((item) => {
       if (node.includes(item.name)) {
         item.children.push({
-          // name: node.slice(1),
           name: _.last(node.slice(1).split('.')),
           type: 'leaf',
           status: chooseType(node, file1, file2),
@@ -130,7 +126,6 @@ const makeChangedLeaf = (acc, node, file1, file2) => {
     });
   } else if (rest.length === 4) {
     _.last(acc.children[0].children).children[0].children.push({
-      // name: node.slice(1),
       name: _.last(node.slice(1).split('.')),
       type: 'leaf',
       status: chooseType(node, file1, file2),
@@ -139,7 +134,6 @@ const makeChangedLeaf = (acc, node, file1, file2) => {
     });
   } else {
     _.last(_.last(acc.children).children).children.push({
-      // name: node.slice(1),
       name: _.last(node.slice(1).split('.')),
       type: 'leaf',
       status: chooseType(node, file1, file2),

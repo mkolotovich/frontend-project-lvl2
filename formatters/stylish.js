@@ -52,49 +52,36 @@ const stylish = (data, result, depth = 0) => {
     name, value, status, newValue,
   } = data;
   if (isLeaf(data)) {
-    // const itemName = name.split('.');
     if (status === 'added') {
       if (_.isObject(value)) {
         if (depth === 1) {
-          // return `${result}${makeSpace(spaceSize, '')}+ ${itemName[itemName.length - 1]}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 2, '')}}\n`;
           return `${result}${makeSpace(spaceSize, '')}+ ${name}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 2, '')}}\n`;
         }
-        // return `${result}${makeSpace(spaceSize * depth + 2, '')}+ ${itemName[itemName.length - 1]}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
         return `${result}${makeSpace(spaceSize * depth + 2, '')}+ ${name}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
       }
-      // return `${result}${makeSpace(spaceSize ** depth + 2, '')}+ ${itemName[itemName.length - 1]}: ${value}\n`;
       return `${result}${makeSpace(spaceSize ** depth + 2, '')}+ ${name}: ${value}\n`;
     } if (status === 'removed') {
       if (depth === 3) {
-        // return `${result}${makeSpace(spaceSize + 8, '')}- ${itemName[itemName.length - 1]}: ${value}\n`;
         return `${result}${makeSpace(spaceSize + 8, '')}- ${name}: ${value}\n`;
       }
       if (_.isObject(value)) {
-        // return `${result}${makeSpace(spaceSize, '')}- ${itemName[itemName.length - 1]}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 6, '')}}\n${makeSpace(spaceSize * depth + 2, '')}}\n`;
         return `${result}${makeSpace(spaceSize, '')}- ${name}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 6, '')}}\n${makeSpace(spaceSize * depth + 2, '')}}\n`;
       }
-      // return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${itemName[itemName.length - 1]}: ${value}\n`;
       return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: ${value}\n`;
     } if (status === 'updated') {
       if (depth !== 4) {
         if (_.isObject(value)) {
-          // return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${itemName[itemName.length - 1]}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${itemName[itemName.length - 1]}: ${newValue}\n`;
           return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${name}: ${newValue}\n`;
         } if (_.isObject(newValue)) {
-          // return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${itemName[itemName.length - 1]}: ${value}\n${makeSpace(spaceSize * depth + 2, '')}+ ${itemName[itemName.length - 1]}: {\n${replacer(newValue, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
           return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: ${value}\n${makeSpace(spaceSize * depth + 2, '')}+ ${name}: {\n${replacer(newValue, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
         }
         if (depth === 3) {
-          // return `${result}${makeSpace(spaceSize * depth + 4, '')}- ${itemName[itemName.length - 1]}: ${value}\n${result}${makeSpace(spaceSize * depth + 4, '')}+ ${itemName[itemName.length - 1]}: ${newValue}\n`;
           return `${result}${makeSpace(spaceSize * depth + 4, '')}- ${name}: ${value}\n${result}${makeSpace(spaceSize * depth + 4, '')}+ ${name}: ${newValue}\n`;
         }
-        // return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${itemName[itemName.length - 1]}: ${value}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${itemName[itemName.length - 1]}: ${newValue}\n`;
         return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: ${value}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${name}: ${newValue}\n`;
       }
-      // return `${result}${makeSpace(spaceSize ** depth - 2, '')}- ${itemName[itemName.length - 1]}: ${value}\n${result}${makeSpace(spaceSize ** depth - 2, '')}+ ${itemName[itemName.length - 1]}: ${newValue}\n`;
       return `${result}${makeSpace(spaceSize ** depth - 2, '')}- ${name}: ${value}\n${result}${makeSpace(spaceSize ** depth - 2, '')}+ ${name}: ${newValue}\n`;
     }
-    // return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${itemName[itemName.length - 1]}: ${value}\n`;
     return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${name}: ${value}\n`;
   }
   const children = getChildren(data);
