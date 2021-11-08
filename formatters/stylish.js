@@ -62,6 +62,9 @@ const stylish = (data, result, depth = 0) => {
       }
       return `${result}${makeSpace(spaceSize ** depth + 2, '')}+ ${itemName[itemName.length - 1]}: ${value}\n`;
     } if (status === 'removed') {
+      if (depth === 3) {
+        return `${result}${makeSpace(spaceSize + 8, '')}- ${itemName[itemName.length - 1]}: ${value}\n`;
+      }
       if (_.isObject(value)) {
         return `${result}${makeSpace(spaceSize, '')}- ${itemName[itemName.length - 1]}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 6, '')}}\n${makeSpace(spaceSize * depth + 2, '')}}\n`;
       }
@@ -70,6 +73,11 @@ const stylish = (data, result, depth = 0) => {
       if (depth !== 4) {
         if (_.isObject(value)) {
           return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${itemName[itemName.length - 1]}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${itemName[itemName.length - 1]}: ${newValue}\n`;
+        } if (_.isObject(newValue)) {
+          return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${itemName[itemName.length - 1]}: ${value}\n${makeSpace(spaceSize * depth + 2, '')}+ ${itemName[itemName.length - 1]}: {\n${replacer(newValue, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
+        }
+        if (depth === 3) {
+          return `${result}${makeSpace(spaceSize * depth + 4, '')}- ${itemName[itemName.length - 1]}: ${value}\n${result}${makeSpace(spaceSize * depth + 4, '')}+ ${itemName[itemName.length - 1]}: ${newValue}\n`;
         }
         return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${itemName[itemName.length - 1]}: ${value}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${itemName[itemName.length - 1]}: ${newValue}\n`;
       }
