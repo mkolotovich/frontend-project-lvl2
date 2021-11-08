@@ -8,7 +8,8 @@ const chooseFormatter = (formatName, structre) => {
   } if (formatName === 'json') {
     return json(structre);
   }
-  return stylish(structre);
+  // return stylish(structre);
+  return stylish(structre, '');
 };
 
 export default chooseFormatter;

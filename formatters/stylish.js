@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
-let string = '{\n';
-let spaceSize = 2;
+const spaceSize = 2;
 
 const makeSpace = (size, space) => {
   let spaceType = space;
@@ -12,126 +11,78 @@ const makeSpace = (size, space) => {
   return space;
 };
 
-const makeLine = (name, symbol) => {
-  string += `${makeSpace(spaceSize, '')}${symbol} ${name}: `;
-  string += '{\n';
-  spaceSize += 4;
+const isLeaf = (node) => {
+  if (node.type === 'node') {
+    return false;
+  }
+  return true;
 };
 
-const res = (stylish, children, tail) => stylish(children) + stylish(tail);
-
-const stylish = (tree) => {
-  const cb = () => {
-    if (!Array.isArray(tree)) {
-      if (Object.entries(tree).length === 1) {
-        const [name, value] = Object.entries(tree)[0];
-        string += `${makeSpace(spaceSize, '')}  ${name}: ${value}\n`;
-        spaceSize -= 2;
-        string += `${makeSpace(spaceSize, '')}}\n`;
-        spaceSize -= 2;
-      } else {
-        const [name, value] = Object.entries(tree)[0];
-        if (!_.isObject(value)) {
-          string += `${makeSpace(spaceSize, '')}  ${name}: ${value}\n`;
-          const [name1, value1] = Object.entries(tree)[1];
-          string += `${makeSpace(spaceSize, '')}  ${name1}: {\n`;
-          spaceSize += 4;
-          const [subName, subValue] = Object.entries(value1)[0];
-          string += `${makeSpace(spaceSize, '')}  ${subName}: ${subValue}\n`;
-          spaceSize -= 2;
-          string += `${makeSpace(spaceSize, '')}}\n`;
-          spaceSize -= 4;
-          string += `${makeSpace(spaceSize, '')}}\n`;
-          spaceSize -= 2;
-        } else {
-          string += `${makeSpace(spaceSize, '')}  ${name}: {\n`;
-          spaceSize += 4;
-          const subName = Object.keys(value);
-          string += `${makeSpace(spaceSize, '')}  ${subName}: {\n`;
-          const [subSubName, subValue] = Object.entries(value[subName])[0];
-          spaceSize += 4;
-          string += `${makeSpace(spaceSize, '')}  ${subSubName}: ${subValue}\n`;
-          spaceSize -= 2;
-          string += `${makeSpace(spaceSize, '')}}\n`;
-          spaceSize -= 4;
-          string += `${makeSpace(spaceSize, '')}}\n`;
-          const [name1, value1] = Object.entries(tree)[1];
-          spaceSize -= 2;
-          string += `${makeSpace(spaceSize, '')}  ${name1}: ${value1}\n`;
-          spaceSize -= 2;
-          string += `${makeSpace(spaceSize, '')}}\n`;
-          spaceSize -= 4;
-          string += `${makeSpace(spaceSize, '')}}`;
-        }
-      }
-      return string;
+const replacer = (obj, size, acc = '') => {
+  const [head, tail] = Object.entries(obj);
+  const [key, value] = head;
+  if (_.isObject(value)) {
+    if (tail) {
+      return replacer(value, size + 4, `${acc}${makeSpace(size + 4, '')}  ${key}: {\n`) + replacer(Object.fromEntries([tail]), size, `${makeSpace(size + 10, '')}}\n${makeSpace(size + 6, '')}}\n`);
     }
-    if (tree.length === 0) {
-      return string;
-    }
-    const [head, ...tail] = tree;
-    const [name, type] = head;
-    const children = head[2];
-    if (type === 'unchanged' && head[2] instanceof Array) {
-      makeLine(name, ' ');
-      return stylish(children) + stylish(tail);
-    } if (type === 'added' && head[2] instanceof Object) {
-      makeLine(name, '+');
-      res(stylish, children, tail);
-    } else if (type === 'deleted' && head[2] instanceof Object) {
-      makeLine(name, '-');
-      res(stylish, children, tail);
-    } else if (type === 'added' && head[2] instanceof Array) {
-      spaceSize += 2;
-      makeLine(name, '+');
-      res(stylish, children, tail);
-    } else if (type === 'deleted' && head[2] instanceof Array) {
-      makeLine(name, '-');
-      res(stylish, children, tail);
-    } else if (type === 'added') {
-      if (tail.length !== 0) {
-        string += `${makeSpace(spaceSize, '')}+ ${name}: ${head[2]}\n`;
-      } else {
-        string += `${makeSpace(spaceSize, '')}+ ${name}: ${head[2]}\n`;
-        spaceSize -= 2;
-        string += `${makeSpace(spaceSize, '')}}\n`;
-        spaceSize -= 4;
-        string += `${makeSpace(spaceSize, '')}}\n`;
-        spaceSize -= 2;
-      }
-      stylish(tail);
-    } else if (type === 'unchanged') {
-      string += `${makeSpace(spaceSize, '')}  ${name}: ${head[2]}\n`;
-      stylish(tail);
-    } else if (type === 'deleted') {
-      string += `${makeSpace(spaceSize, '')}- ${name}: ${head[2]}\n`;
-      stylish(tail);
-    } else if (type === 'changed') {
-      if (tail.length !== 0) {
-        string += `${makeSpace(spaceSize, '')}- ${name}: ${head[2]}\n`;
-        string += `${makeSpace(spaceSize, '')}+ ${name}: ${head[3]}\n`;
-      } else {
-        if (head[2] instanceof Array) {
-          string += `${makeSpace(spaceSize, '')}- ${name}: {\n`;
-          spaceSize += 4;
-          const [subName, , value] = head[2];
-          string += `${makeSpace(spaceSize, '')}  ${subName}: ${value}\n`;
-          spaceSize -= 2;
-          string += `${makeSpace(spaceSize, '')}}\n`;
-          spaceSize -= 2;
-        } else {
-          string += `${makeSpace(spaceSize, '')}- ${name}: ${head[2]}\n`;
-        }
-        string += `${makeSpace(spaceSize, '')}+ ${name}: ${head[3]}\n`;
-        spaceSize -= 2;
-        string += `${makeSpace(spaceSize, '')}}\n`;
-        spaceSize -= 2;
-      }
-      stylish(tail);
-    }
-    return string;
-  };
-  cb();
-  return string;
+    return replacer(value, size + 4, `${acc}${makeSpace(size + 4, '')}  ${key}: {\n`);
+  }
+  if (tail !== undefined) {
+    const result = `${acc}${makeSpace(size + 4, '')}  ${key}: ${value}\n`;
+    return result + replacer(Object.fromEntries([tail]), size, acc);
+  }
+  return `${acc}${makeSpace(size + 4, '')}  ${key}: ${value}\n`;
 };
+
+const makeLine = (name, symbol, acc, item, depth) => {
+  if (item.type === 'node') {
+    if (depth > 1) {
+      const itemName = item.name.split('.');
+      return `${makeSpace(spaceSize ** depth + spaceSize, '')}${symbol}  ${itemName[itemName.length - 1]}: {\n`;
+    }
+    return `${makeSpace(spaceSize, '')}${symbol}  ${item.name}: {\n`;
+  }
+  return '';
+};
+
+const getChildren = (node) => node.children;
+
+const stylish = (data, result, depth = 0) => {
+  const {
+    name, value, status, newValue,
+  } = data;
+  if (isLeaf(data)) {
+    const itemName = name.split('.');
+    if (status === 'added') {
+      if (_.isObject(value)) {
+        if (depth === 1) {
+          return `${result}${makeSpace(spaceSize, '')}+ ${itemName[itemName.length - 1]}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 2, '')}}\n`;
+        }
+        return `${result}${makeSpace(spaceSize * depth + 2, '')}+ ${itemName[itemName.length - 1]}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
+      }
+      return `${result}${makeSpace(spaceSize ** depth + 2, '')}+ ${itemName[itemName.length - 1]}: ${value}\n`;
+    } if (status === 'removed') {
+      if (_.isObject(value)) {
+        return `${result}${makeSpace(spaceSize, '')}- ${itemName[itemName.length - 1]}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 6, '')}}\n${makeSpace(spaceSize * depth + 2, '')}}\n`;
+      }
+      return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${itemName[itemName.length - 1]}: ${value}\n`;
+    } if (status === 'updated') {
+      if (depth !== 4) {
+        if (_.isObject(value)) {
+          return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${itemName[itemName.length - 1]}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${itemName[itemName.length - 1]}: ${newValue}\n`;
+        }
+        return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${itemName[itemName.length - 1]}: ${value}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${itemName[itemName.length - 1]}: ${newValue}\n`;
+      }
+      return `${result}${makeSpace(spaceSize ** depth - 2, '')}- ${itemName[itemName.length - 1]}: ${value}\n${result}${makeSpace(spaceSize ** depth - 2, '')}+ ${itemName[itemName.length - 1]}: ${newValue}\n`;
+    }
+    return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${itemName[itemName.length - 1]}: ${value}\n`;
+  }
+  const children = getChildren(data);
+  const line = children.map((item) => stylish(item, makeLine(name, '', result, item, depth + 1), depth + 1));
+  if (name === '') {
+    return `{\n${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}`;
+  }
+  return `${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}\n`;
+};
+
 export default stylish;

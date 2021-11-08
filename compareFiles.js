@@ -1,19 +1,17 @@
 import _ from 'lodash';
 import chooseFormatter from './formatters/index.js';
 
-const getKeys = (obj, keys, path) => {
-  let fullPath = path;
+const getKeys = (obj, keys, path, obj1) => {
   const cb = ([key, value]) => {
     if (!_.isObject(value)) {
-      fullPath = `${path}.${key}`;
-      keys.add(fullPath);
-    } else if (path === '') {
-      fullPath = key;
-      keys.add(key);
-      return getKeys(value, keys, fullPath);
-    } else {
       keys.add(`${path}.${key}`);
-      return getKeys(value, keys, `${path}.${key}`);
+    } else {
+      const fullPath = `${path}.${key}`;
+      keys.add(fullPath);
+      if (!_.isObject(_.get(obj1, fullPath.slice(1))) || fullPath.slice(1).includes('.')) {
+        return [];
+      }
+      return getKeys(value, keys, fullPath, obj1);
     }
     return keys;
   };
@@ -23,113 +21,159 @@ const getKeys = (obj, keys, path) => {
   return keys;
 };
 
-const structure = [];
+const chooseType = (node, file1, file2) => {
+  if ((_.isObject(_.get(file1, node.slice(1))) && _.isObject(_.get(file2, node.slice(1))))
+  || _.get(file1, node.slice(1)) === _.get(file2, node.slice(1))) {
+    return 'unchanged';
+  }
+  if (_.has(file1, node.slice(1)) && _.has(file2, node.slice(1))
+  && _.get(file1, node.slice(1)) !== _.get(file2, node.slice(1))) {
+    return 'updated';
+  }
+  if (_.has(file1, node.slice(1))) {
+    return 'removed';
+  }
+  return 'added';
+};
 
-const makeDiff = (list, group, file1, file2) => {
-  if (list.length === 0) {
-    return structure;
+const getValue = (node, file1, file2) => {
+  if (_.has(file1, node.slice(1))) {
+    return _.get(file1, node.slice(1));
   }
-  let groupNumber = group;
-  const [head, ...tail] = list;
-  if (_.isObject(_.get(file1, head)) && _.isObject(_.get(file2, head))) {
-    if (head.includes('.')) {
-      const [...rest] = head.split('.');
-      const name = _.last(rest);
-      if (rest.length === 3) {
-        _.last(_.last(_.last(structure[group]))).push([name, 'unchanged', []]);
-      } else {
-        _.last(structure[group]).push([name, 'unchanged', []]);
-      }
-    } else {
-      structure.push([head, 'unchanged', []]);
-      if (structure[group][0] !== head) {
-        groupNumber += 1;
-      }
-    }
-    return makeDiff(tail, groupNumber, file1, file2);
+  return _.get(file2, node.slice(1));
+};
+
+const makeNode = (acc, node, file1, file2) => {
+  const path = node.slice(1).split('.')[0];
+  const fullPath = node.slice(1);
+  if (node.slice(1).includes('.')) {
+    acc[path].children[0][fullPath] = {
+      name: node.slice(1),
+      type: 'node',
+      status: chooseType(node, file1, file2),
+      children: [getValue(node, file1, file2)],
+    };
+  } else {
+    acc.children.push({
+      name: node.slice(1),
+      type: 'node',
+      status: chooseType(node, file1, file2),
+      children: [],
+    });
   }
-  const [...rest] = head.split('.');
-  const name = _.last(rest);
-  if (_.has(file1, head) && _.has(file2, head) && _.get(file1, head) === _.get(file2, head)) {
-    if (rest.length === 3) {
-      _.last(_.last(_.last(structure[group]))).push([name, 'unchanged', _.get(file2, head)]);
-    } else {
-      _.last(structure[group]).push([name, 'unchanged', _.get(file2, head)]);
+};
+
+const makeUpdatedNode = (acc, node, file1, file2) => {
+  acc.children.push({
+    name: node.slice(1),
+    type: 'leaf',
+    status: chooseType(node, file1, file2),
+    value: getValue(node, file1, file2),
+  });
+};
+
+const makeLeaf = (acc, node, file1, file2) => {
+  acc.children.map((item) => {
+    if (node.includes(item.name)) {
+      item.children.push({
+        name: node.slice(1),
+        type: 'leaf',
+        status: chooseType(node, file1, file2),
+        value: getValue(node, file1, file2),
+      });
     }
-  } else if (_.has(file1, head) && _.has(file2, head)) {
-    if (rest.length === 4) {
-      _.last(_.last(_.last(_.last(_.last(structure[group]))))).push([name, 'changed', _.get(file1, head), _.get(file2, head)]);
-    } else if (_.isObject(_.get(file1, head))) {
-      _.last(structure[group]).push([name, 'changed', [], _.get(file2, head)]);
-    } else {
-      _.last(structure[group]).push([name, 'changed', _.get(file1, head), _.get(file2, head)]);
-    }
-  } else if (_.has(file2, head)) {
-    if (_.isObject(_.get(file2, head))) {
-      if (rest.length === 1) {
-        groupNumber += 1;
-        structure.push([head, 'added', _.get(file2, head)]);
-        return structure;
-      }
-      if (rest.length === 3) {
-        _.last(_.last(structure[group])).push([name, 'unchanged']);
-      } else {
-        const [path] = rest;
-        if (_.has(file1, path) && _.has(file2, path)) {
-          _.last(structure[group]).push([name, 'added', _.get(file2, head)]);
-          tail.shift();
-        } else {
-          _.last(structure[group]).push([name, 'unchanged']);
-        }
-      }
-    } else if (rest.length === 3) {
-      _.last(_.last(_.last(structure[group]))).push([name, 'added', _.get(file2, head)]);
-    } else if (rest.length === 4) {
-      _.last(_.last(_.last(structure[group]))).push([name, 'unchanged', _.get(file2, head)]);
-    } else {
-      const [path] = rest;
-      if (_.has(file1, path) && _.has(file2, path)) {
-        _.last(structure[group]).push([name, 'added', _.get(file2, head)]);
-      } else {
-        _.last(structure[group]).push([name, 'unchanged', _.get(file2, head)]);
-      }
-    }
-  } else if (_.has(file1, head)) {
-    const path = `${rest[0]}.${rest[1]}`;
-    if (_.has(file1, path) && _.has(file2, path)) {
-      _.last(_.last(structure[group]))[2].push(name, 'unchanged', _.get(file1, head));
-    } else {
-      if (rest.length === 1) {
-        groupNumber += 1;
-        structure.push([head, 'deleted', _.get(file1, head)]);
-        const filteredTail = tail.filter((item) => {
-          if (!item.includes(head)) {
-            return true;
-          }
-          return false;
-        });
-        return makeDiff(filteredTail, group, file1, file2);
-      }
-      if (_.isObject(_.get(file1, head))) {
-        _.last(structure[group]).push([name, 'unchanged']);
-      } else if (rest.length === 3) {
-        _.last(_.last(structure[group])).push([name, 'unchanged', _.get(file1, head)]);
-      } else {
-        _.last(structure[group]).push([name, 'deleted', _.get(file1, head)]);
-      }
-    }
+    return [];
+  });
+};
+
+const cb = ([key, value], acc, node, file1, file2) => {
+  const fullPath = node.slice(1);
+  const pathToNode = `${fullPath}.${key}`;
+  if (!_.isObject(getValue(`${node}.${key}`, file1, file2))) {
+    _.last(acc.children[0].children).children.push({
+      name: pathToNode,
+      type: 'leaf',
+      status: chooseType(`${node}.${key}`, file1, file2),
+      children: [],
+      value,
+    });
+  } else {
+    _.last(acc.children[0].children).children.unshift({
+      name: pathToNode,
+      type: 'node',
+      status: chooseType(pathToNode, file1, file2),
+      children: [],
+    });
+    const child = `${pathToNode}.${Object.keys(getValue(`.${pathToNode}`, file1, file2))[0]}`;
+    _.last(acc.children[0].children).children[0].children.push({
+      name: child,
+      type: 'leaf',
+      status: chooseType(`.${child}`, file1, file2),
+      value: getValue(`.${child}`, file1, file2),
+      newValue: _.get(file2, child),
+    });
   }
-  return makeDiff(tail, group, file1, file2);
+};
+
+const getChildren = (acc, node, file1, file2) => {
+  if (_.isObject(_.get(file2, node.slice(1)))) {
+    const objKeys = Object.entries(_.get(file2, node.slice(1)));
+    return objKeys.map((child) => cb(child, acc, node, file1, file2));
+  }
+  return [];
+};
+
+const makeInnerNode = (acc, node, file1, file2) => {
+  acc.children[0].children.push({
+    name: node.slice(1),
+    type: 'node',
+    status: chooseType(node, file1, file2),
+    children: [],
+  });
+  getChildren(acc, node, file1, file2);
+};
+
+const makeChangedLeaf = (acc, node, file1, file2) => {
+  acc.children.map((item) => {
+    if (node.includes(item.name)) {
+      item.children.push({
+        name: node.slice(1),
+        type: 'leaf',
+        status: chooseType(node, file1, file2),
+        value: getValue(node, file1, file2),
+        newValue: _.get(file2, node.slice(1)),
+      });
+    }
+    return [];
+  });
 };
 
 const compareFiles = (file1, file2, formatName) => {
   const keys = new Set();
-  getKeys(file1, keys, '');
-  getKeys(file2, keys, '');
+  getKeys(file1, keys, '', file2);
+  getKeys(file2, keys, '', file1);
   const keysArray = Array.from(keys);
   const sortedKeys = keysArray.sort();
-  const structre = makeDiff(sortedKeys, 0, file1, file2);
-  return chooseFormatter(formatName, structre);
+  const ast = sortedKeys.reduce((acc, node) => {
+    if (node.slice(1).includes('.')) {
+      if (chooseType(node, file1, file2) === 'unchanged' && _.isObject(getValue(node, file1, file2))) {
+        makeInnerNode(acc, node, file1, file2);
+      } else if (_.isObject(_.get(file1, node.slice(1)))
+      && _.isObject(_.get(file2, node.slice(1)))) {
+        makeNode(acc, node, file1, file2);
+      } else if (chooseType(node, file1, file2) === 'updated') {
+        makeChangedLeaf(acc, node, file1, file2);
+      } else {
+        makeLeaf(acc, node, file1, file2);
+      }
+    } else if (chooseType(node, file1, file2) !== 'unchanged') {
+      makeUpdatedNode(acc, node, file1, file2);
+    } else {
+      makeNode(acc, node, file1, file2);
+    }
+    return acc;
+  }, { name: '', children: [], type: 'node' });
+  return chooseFormatter(formatName, ast);
 };
 
 export default compareFiles;
