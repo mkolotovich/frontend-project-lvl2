@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "difference generator",
-  "main": "./formatters/index.js",
+  "main": "parsers.js",
   "scripts": {
     "test": "jest"
   },

@@ -14,5 +14,3 @@ program
     console.log(parseFiles(filepath1, filepath2, program.opts().format));
   })
   .parse();
-
-export default parseFiles;
