@@ -17,8 +17,11 @@ const plain = (tree, result, path = '') => {
     } if (status === 'removed') {
       return `${result}Property '${nodeName}' was removed\n`;
     } if (status === 'updated') {
-      if (typeof value === 'string') {
+      if (typeof value === 'string' && typeof newValue === 'string') {
         return `${result}Property '${nodeName}' was updated. From '${value}' to '${newValue}'\n`;
+      }
+      if (typeof value === 'string') {
+        return `${result}Property '${nodeName}' was updated. From '${value}' to ${newValue}\n`;
       }
       if (_.isObject(value)) {
         return `${result}Property '${nodeName}' was updated. From [complex value] to '${newValue}'\n`;
