@@ -11,7 +11,7 @@ const makeSpace = (size, space) => {
   return space;
 };
 
-const isLeaf = (node) => {
+export const isLeaf = (node) => {
   if (node.type === 'node') {
     return false;
   }
@@ -45,11 +45,9 @@ const makeLine = (name, symbol, acc, item, depth) => {
   return '';
 };
 
-const getChildren = (node) => node.children;
-
-const stylish = (data, result, depth = 0) => {
+export const stylish = (data, result, depth = 0) => {
   const {
-    name, value, status, newValue,
+    name, value, status, newValue, children,
   } = data;
   if (isLeaf(data)) {
     if (status === 'added') {
@@ -84,12 +82,9 @@ const stylish = (data, result, depth = 0) => {
     }
     return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${name}: ${value}\n`;
   }
-  const children = getChildren(data);
   const line = children.map((item) => stylish(item, makeLine(name, '', result, item, depth + 1), depth + 1));
   if (name === '') {
     return `{\n${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}`;
   }
   return `${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}\n`;
 };
-
-export default stylish;

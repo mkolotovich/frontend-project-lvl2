@@ -50,7 +50,7 @@ const makeNode = (acc, node, file1, file2) => {
       acc.children.map((item) => {
         if (node.includes(item.name)) {
           item.children.push({
-            name: node.slice(1),
+            name: _.last(node.slice(1).split('.')),
             type: 'node',
             status: chooseType(node, file1, file2),
             children: [],
@@ -60,7 +60,7 @@ const makeNode = (acc, node, file1, file2) => {
       });
     } else {
       _.last(acc.children[0].children).children.push({
-        name: node.slice(1),
+        name: _.last(node.slice(1).split('.')),
         type: 'node',
         status: chooseType(node, file1, file2),
         children: [],
@@ -68,7 +68,7 @@ const makeNode = (acc, node, file1, file2) => {
     }
   } else {
     acc.children.push({
-      name: node.slice(1),
+      name: _.last(node.slice(1).split('.')),
       type: 'node',
       status: chooseType(node, file1, file2),
       children: [],
