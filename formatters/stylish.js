@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
-export const spaceSize = 2;
+const spaceSize = 2;
 
-export const makeSpace = (size, space) => {
+const makeSpace = (size, space) => {
   let spaceType = space;
   if (size > 0) {
     spaceType += ' ';
