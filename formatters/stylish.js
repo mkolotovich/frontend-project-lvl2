@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
-const spaceSize = 2;
+export const spaceSize = 2;
 
-const makeSpace = (size, space) => {
+export const makeSpace = (size, space) => {
   let spaceType = space;
   if (size > 0) {
     spaceType += ' ';
@@ -34,13 +34,13 @@ const replacer = (obj, size, acc = '') => {
   return `${acc}${makeSpace(size + 4, '')}  ${key}: ${value}\n`;
 };
 
-const makeLine = (name, symbol, acc, item, depth) => {
-  if (item.type === 'node') {
+const makeLine = (symbol, item, depth) => {
+  if (!isLeaf(item)) {
+    const itemName = item.name;
     if (depth > 1) {
-      const itemName = item.name.split('.');
-      return `${makeSpace(spaceSize ** depth + spaceSize, '')}${symbol}  ${itemName[itemName.length - 1]}: {\n`;
+      return `${makeSpace(spaceSize ** depth + spaceSize, '')}${symbol}  ${itemName}: {\n`;
     }
-    return `${makeSpace(spaceSize, '')}${symbol}  ${item.name}: {\n`;
+    return `${makeSpace(spaceSize, '')}${symbol}  ${itemName}: {\n`;
   }
   return '';
 };
@@ -82,7 +82,7 @@ export const stylish = (data, result, depth = 0) => {
     }
     return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${name}: ${value}\n`;
   }
-  const line = children.map((item) => stylish(item, makeLine(name, '', result, item, depth + 1), depth + 1));
+  const line = children.map((item) => stylish(item, makeLine('', item, depth + 1), depth + 1));
   if (name === '') {
     return `{\n${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}`;
   }
