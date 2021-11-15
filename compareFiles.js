@@ -186,19 +186,34 @@ const makeTree = (keys, file1, file2, acc) => {
   return makeTree(rest, file1, file2, []);
 };
 
-const sort = (arr, acc = []) => {
+// const sort = (arr, acc = []) => {
+const sort = (arr, acc = [], subChildren) => {
   const [head, ...tail] = arr;
   if (tail.length === 0) {
+    if (subChildren) {
+      return [...acc, head, ...subChildren];
+    }
     return [...acc, head];
   }
   const [next] = tail;
-  if (head.split('.').length > next.split('.').length) {
-    return sort([...tail.slice(1), head], [...acc, next]);
-  }
+  // if (head.split('.').length > next.split('.').length) {
+  //   return sort([...tail.slice(1), head], [...acc, next]);
+  // }
   if (head.slice(1).includes('.') && next.includes(_.last(head.split('.')))) {
-    return sort([...tail.slice(1), next], [...acc, head]);
+    const children = arr.filter((item) => {
+      if (item.includes(head)) {
+        return true;
+      }
+      return false;
+    });
+    // return sort([...tail.slice(1), next], [...acc, head]);
+    if (children.length > tail.length) {
+      return sort(tail, [...acc, head], []);
+    }
+    return sort([...tail.slice(children.length - 1)], acc, children);
   }
-  return sort(tail, [...acc, head]);
+  // return sort(tail, [...acc, head]);
+  return sort(tail, [...acc, head], subChildren);
 };
 
 const compareFiles = (file1, file2, formatName) => {
@@ -248,6 +263,7 @@ const compareFiles = (file1, file2, formatName) => {
   // return makeTree(sortedKeys, file1, file2);
   // const res = groupKeys.map((item) => makeTree(item, file1, file2, makeNode(item[0], [])));
   // const res = groupKeys.map((item) => makeTree(item, file1, file2));
+  sort(groupKeys[0]);
   const res = groupKeys.map((item) => {
     const sorted = sort(item);
     // return makeTree(sorted, file1, file2);
