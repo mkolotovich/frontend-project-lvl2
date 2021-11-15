@@ -3,10 +3,8 @@ import _ from 'lodash';
 const spaceSize = 2;
 
 const makeSpace = (size, space) => {
-  let spaceType = space;
   if (size > 0) {
-    spaceType += ' ';
-    return makeSpace(size - 1, spaceType);
+    return makeSpace(size - 1, `${space} `);
   }
   return space;
 };

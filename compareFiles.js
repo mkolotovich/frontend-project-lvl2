@@ -68,7 +68,6 @@ const makeTree = (keys, file1, file2, acc) => {
   if (keys.length === 0) {
     return _.sortBy(acc, ['name']);
   }
-  // const [header, ...rest] = keys;
   const [header] = keys;
   const rest = keys.slice(1);
   if (header.slice(1).includes('.')) {
@@ -87,7 +86,6 @@ const makeTree = (keys, file1, file2, acc) => {
 };
 
 const sort = (arr, acc = [], subChildren) => {
-  // const [head, ...tail] = arr;
   const [head] = arr;
   const tail = arr.slice(1);
   if (tail.length === 0) {
@@ -117,7 +115,6 @@ const compareFiles = (file1, file2, formatName) => {
   getKeys(file1, keys, '', file2);
   getKeys(file2, keys, '', file1);
   const keysArray = Array.from(keys);
-  // const sortedKeys = keysArray.sort();
   const sortedKeys = _.sortBy(keysArray);
   const groups = sortedKeys.filter((item) => {
     if (!item.slice(1).includes('.')) {
