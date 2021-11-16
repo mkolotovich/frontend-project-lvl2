@@ -21,8 +21,16 @@ const getKeys = (obj, keys, path, obj1) => {
   return keys;
 };
 
+const isValueObject = (node, file1, file2) => {
+  if (_.isObject(_.get(file1, node.slice(1))) && _.isObject(_.get(file2, node.slice(1)))) {
+    return true;
+  }
+  return false;
+};
+
 const chooseType = (node, file1, file2) => {
-  if ((_.isObject(_.get(file1, node.slice(1))) && _.isObject(_.get(file2, node.slice(1))))
+  // if ((_.isObject(_.get(file1, node.slice(1))) && _.isObject(_.get(file2, node.slice(1))))
+  if (isValueObject(node, file1, file2)
   || _.get(file1, node.slice(1)) === _.get(file2, node.slice(1))) {
     return 'unchanged';
   }
@@ -71,8 +79,9 @@ const makeTree = (keys, file1, file2, acc) => {
   const [header] = keys;
   const rest = keys.slice(1);
   if (header.slice(1).includes('.')) {
-    if (_.isObject(_.get(file1, header.slice(1)))
-    && _.isObject(_.get(file2, header.slice(1)))) {
+    // if (_.isObject(_.get(file1, header.slice(1)))
+    // && _.isObject(_.get(file2, header.slice(1)))) {
+    if (isValueObject(header, file1, file2)) {
       return makeTree([], file1, file2, [...acc, makeNode(_.last(header.slice(1).split('.')), makeTree(rest, file1, file2, []))]);
     } if (chooseType(header, file1, file2) === 'updated') {
       return makeTree(rest, file1, file2, [...acc, makeChangedLeaf(header, file1, file2)]);
