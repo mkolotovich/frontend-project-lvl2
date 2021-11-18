@@ -59,8 +59,6 @@ export const stylish = (data, result, depth = 0) => {
     return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${name}: ${value}\n`;
   }
   const line = children.map((item) => stylish(item, makeLine(item, depth + 1), depth + 1));
-  if (name === '') {
-    return `{\n${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}`;
-  }
+  if (name === '') return `{\n${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}`;
   return `${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}\n`;
 };
