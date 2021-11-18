@@ -33,13 +33,15 @@ const replacer = (obj, size, acc = '') => {
   return `${acc}${makeSpace(size + 4, '')}  ${key}: ${value}\n`;
 };
 
-const makeLine = (symbol, item, depth) => {
+// const makeLine = (symbol, item, depth) => {
+const makeLine = (item, depth) => {
   if (!isLeaf(item)) {
-    const itemName = item.name;
-    if (depth > 1) {
-      return `${makeSpace(spaceSize ** depth + spaceSize, '')}${symbol}  ${itemName}: {\n`;
-    }
-    return `${makeSpace(spaceSize, '')}${symbol}  ${itemName}: {\n`;
+    // const itemName = item.name;
+    // if (depth > 1) {
+    //   return `${makeSpace(spaceSize ** depth + spaceSize, '')}${symbol}  ${itemName}: {\n`;
+    // }
+    // return `${makeSpace(spaceSize, '')}${symbol}  ${itemName}: {\n`;
+    return `${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${item.name}: {\n`;
   }
   return '';
 };
@@ -69,7 +71,8 @@ export const stylish = (data, result, depth = 0) => {
     }
     return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${name}: ${value}\n`;
   }
-  const line = children.map((item) => stylish(item, makeLine('', item, depth + 1), depth + 1));
+  // const line = children.map((item) => stylish(item, makeLine('', item, depth + 1), depth + 1));
+  const line = children.map((item) => stylish(item, makeLine(item, depth + 1), depth + 1));
   if (name === '') {
     return `{\n${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}`;
   }
