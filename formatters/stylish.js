@@ -51,10 +51,7 @@ export const stylish = (data, result, depth = 0) => {
   if (isLeaf(data)) {
     if (status === 'added') {
       if (_.isObject(value)) {
-        if (depth === 1) {
-          return `${result}${makeSpace(spaceSize, '')}+ ${name}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 2, '')}}\n`;
-        }
-        return `${result}${makeSpace(spaceSize * depth + 2, '')}+ ${name}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
+        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: {\n${replacer(value, depthSpaceSize * (depth - 1) + spaceSize)}${makeSpace(depthSpaceSize * depth, '')}}\n`;
       }
       return `${result}${makeSpace(spaceSize ** depth + 2, '')}+ ${name}: ${value}\n`;
     } if (status === 'removed') {
