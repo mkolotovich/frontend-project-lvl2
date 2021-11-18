@@ -58,13 +58,9 @@ export const stylish = (data, result, depth = 0) => {
       }
       return `${result}${makeSpace(spaceSize ** depth + 2, '')}+ ${name}: ${value}\n`;
     } if (status === 'removed') {
-      // if (depth === 3) {
-      //   return `${result}${makeSpace(spaceSize + 8, '')}- ${name}: ${value}\n`;
-      // }
       if (_.isObject(value)) {
         return `${result}${makeSpace(spaceSize, '')}- ${name}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 6, '')}}\n${makeSpace(spaceSize * depth + 2, '')}}\n`;
       }
-      // return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: ${value}\n`;
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${value}\n`;
     } if (status === 'updated') {
       if (_.isObject(value)) {
