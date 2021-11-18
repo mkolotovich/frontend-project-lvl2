@@ -71,9 +71,6 @@ export const stylish = (data, result, depth = 0) => {
       } if (_.isObject(newValue)) {
         return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: ${value}\n${makeSpace(spaceSize * depth + 2, '')}+ ${name}: {\n${replacer(newValue, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
       }
-      if (depth === 3) {
-        return `${result}${makeSpace(spaceSize * depth + 4, '')}- ${name}: ${value}\n${result}${makeSpace(spaceSize * depth + 4, '')}+ ${name}: ${newValue}\n`;
-      }
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${value}\n${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${newValue}\n`;
     }
     return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${name}: ${value}\n`;
