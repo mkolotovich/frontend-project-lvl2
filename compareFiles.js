@@ -122,19 +122,7 @@ const compareFiles = (file1, file2, formatName) => {
   getKeys(file2, keys, '', file1);
   const keysArray = Array.from(keys);
   const sortedKeys = _.sortBy(keysArray);
-  // const groups = sortedKeys.filter((item) => {
-  //   if (!item.slice(1).includes('.')) {
-  //     return true;
-  //   }
-  //   return false;
-  // });
   const groups = sortedKeys.filter((item) => !item.slice(1).includes('.'));
-  // const groupKeys = groups.map((item) => sortedKeys.filter((el) => {
-  //   if (el.includes(item)) {
-  //     return true;
-  //   }
-  //   return false;
-  // }));
   const groupKeys = groups.map((item) => sortedKeys.filter((el) => el.includes(item)));
   sort(groupKeys[0]);
   const res = groupKeys.map((item) => {
