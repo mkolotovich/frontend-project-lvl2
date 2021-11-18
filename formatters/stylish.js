@@ -46,21 +46,14 @@ export const stylish = (data, result, depth = 0) => {
   } = data;
   if (isLeaf(data)) {
     if (status === 'added') {
-      if (_.isObject(value)) {
-        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: {\n${replacer(value, depthSpaceSize * (depth - 1) + spaceSize)}${makeSpace(depthSpaceSize * depth, '')}}\n`;
-      }
+      if (_.isObject(value)) return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: {\n${replacer(value, depthSpaceSize * (depth - 1) + spaceSize)}${makeSpace(depthSpaceSize * depth, '')}}\n`;
       return `${result}${makeSpace(spaceSize ** depth + 2, '')}+ ${name}: ${value}\n`;
     } if (status === 'removed') {
-      if (_.isObject(value)) {
-        return `${result}${makeSpace(spaceSize, '')}- ${name}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 6, '')}}\n${makeSpace(spaceSize * depth + 2, '')}}\n`;
-      }
+      if (_.isObject(value)) return `${result}${makeSpace(spaceSize, '')}- ${name}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 6, '')}}\n${makeSpace(spaceSize * depth + 2, '')}}\n`;
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${value}\n`;
     } if (status === 'updated') {
-      if (_.isObject(value)) {
-        return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${name}: ${newValue}\n`;
-      } if (_.isObject(newValue)) {
-        return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: ${value}\n${makeSpace(spaceSize * depth + 2, '')}+ ${name}: {\n${replacer(newValue, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
-      }
+      if (_.isObject(value)) return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${name}: ${newValue}\n`;
+      if (_.isObject(newValue)) return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: ${value}\n${makeSpace(spaceSize * depth + 2, '')}+ ${name}: {\n${replacer(newValue, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${value}\n${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${newValue}\n`;
     }
     return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${name}: ${value}\n`;
