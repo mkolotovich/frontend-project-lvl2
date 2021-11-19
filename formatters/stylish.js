@@ -35,6 +35,16 @@ const makeLine = (item, depth) => {
   return '';
 };
 
+const printComplexValues = (value, newValue, depth) => {
+  if (_.isObject(value)) {
+    return [`{\n${replacer(value, spaceSize * depth + spaceSize)}${makeSpace(spaceSize * depth + 4, '')}}`, newValue];
+  }
+  if (_.isObject(newValue)) {
+    return [value, `{\n${replacer(newValue, spaceSize * depth + spaceSize)}${makeSpace(spaceSize * depth + 4, '')}}`];
+  }
+  return [value, newValue];
+};
+
 export const stylish = (data, result, depth = 0) => {
   const {
     name, value, status, newValue, children,
@@ -47,8 +57,10 @@ export const stylish = (data, result, depth = 0) => {
       if (_.isObject(value)) return `${result}${makeSpace(spaceSize, '')}- ${name}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 6, '')}}\n${makeSpace(spaceSize * depth + 2, '')}}\n`;
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${value}\n`;
     } if (status === 'updated') {
-      if (_.isObject(value)) return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: {\n${replacer(value, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${name}: ${newValue}\n`;
-      if (_.isObject(newValue)) return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: ${value}\n${makeSpace(spaceSize * depth + 2, '')}+ ${name}: {\n${replacer(newValue, spaceSize * depth + 2)}${makeSpace(spaceSize * depth + 4, '')}}\n`;
+      const [printValue, printNewValue] = printComplexValues(value, newValue, depth);
+      if (_.isObject(value) || _.isObject(newValue)) {
+        return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: ${printValue}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${name}: ${printNewValue}\n`;
+      }
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${value}\n${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${newValue}\n`;
     }
     return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${name}: ${value}\n`;
