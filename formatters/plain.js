@@ -32,13 +32,16 @@ const plain = (tree, result, path = '') => {
     const nodeName = `${path}${name}`.slice(1);
     const [printValue, printNewValue] = _.isObject(value) || _.isObject(newValue)
       ? printComplexValues(value, newValue) : printSimpleValues(value, newValue);
-    if (status === 'added') {
-      return `${result}Property '${nodeName}' was added with value: ${printValue}\n`;
-    } if (status === 'removed') return `${result}Property '${nodeName}' was removed\n`;
-    if (status === 'updated') {
-      return `${result}Property '${nodeName}' was updated. From ${printValue} to ${printNewValue}\n`;
+    switch (status) {
+      case 'added':
+        return `${result}Property '${nodeName}' was added with value: ${printValue}\n`;
+      case 'removed':
+        return `${result}Property '${nodeName}' was removed\n`;
+      case 'updated':
+        return `${result}Property '${nodeName}' was updated. From ${printValue} to ${printNewValue}\n`;
+      default:
+        return '';
     }
-    return '';
   }
   const res = children.map((item) => plain(item, result, `${path}${name}.`)).join('');
   if (path === '') return res.slice(0, -1);
