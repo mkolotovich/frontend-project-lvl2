@@ -44,8 +44,7 @@ const plain = (tree, result, path = '') => {
     }
   }
   const res = children.map((item) => plain(item, result, `${path}${name}.`)).join('');
-  // if (path === '') return res.slice(0, -1);
-  return res;
+  return (path === '') ? res.slice(0, -1) : res;
 };
 
 export default plain;
