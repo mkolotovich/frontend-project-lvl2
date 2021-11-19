@@ -13,11 +13,12 @@ const plain = (tree, result, path = '') => {
       return `${result}Property '${nodeName}' was added with value: ${value}\n`;
     } if (status === 'removed') return `${result}Property '${nodeName}' was removed\n`;
     if (status === 'updated') {
+      if (typeof value === 'string' && typeof newValue === 'string') return `${result}Property '${nodeName}' was updated. From '${value}' to '${newValue}'\n`;
+      if (typeof value === 'string') return `${result}Property '${nodeName}' was updated. From '${value}' to ${newValue}\n`;
       if (_.isObject(value)) return `${result}Property '${nodeName}' was updated. From [complex value] to '${newValue}'\n`;
-      if (newValue === null) return `${result}Property '${nodeName}' was updated. From ${value} to ${newValue}\n`;
-      if (value === null) return `${result}Property '${nodeName}' was updated. From ${value} to '${newValue}'\n`;
+      if (typeof newValue === 'string') return `${result}Property '${nodeName}' was updated. From ${value} to '${newValue}'\n`;
       if (_.isObject(newValue)) return `${result}Property '${nodeName}' was updated. From ${value} to [complex value]\n`;
-      return `${result}Property '${nodeName}' was updated. From '${value}' to '${newValue}'\n`;
+      return `${result}Property '${nodeName}' was updated. From ${value} to ${newValue}\n`;
     }
     return '';
   }
