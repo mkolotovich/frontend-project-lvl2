@@ -10,13 +10,6 @@ const makeSpace = (size, space) => {
   return space;
 };
 
-// export const isLeaf = (node) => {
-//   if (node.type === 'node') {
-//     return false;
-//   }
-//   return true;
-// };
-
 export const isLeaf = (node) => node.type !== 'node';
 
 const replacer = (obj, size, acc = '') => {
