@@ -30,14 +30,12 @@ const plain = (tree, result, path = '') => {
   } = tree;
   if (isLeaf(tree)) {
     const nodeName = `${path}${name}`.slice(1);
+    const [printValue, printNewValue] = _.isObject(value) || _.isObject(newValue)
+      ? printComplexValues(value, newValue) : printSimpleValues(value, newValue);
     if (status === 'added') {
-      if (typeof value === 'string') return `${result}Property '${nodeName}' was added with value: '${value}'\n`;
-      if (_.isObject(value)) return `${result}Property '${nodeName}' was added with value: [complex value]\n`;
-      return `${result}Property '${nodeName}' was added with value: ${value}\n`;
+      return `${result}Property '${nodeName}' was added with value: ${printValue}\n`;
     } if (status === 'removed') return `${result}Property '${nodeName}' was removed\n`;
     if (status === 'updated') {
-      const [printValue, printNewValue] = _.isObject(value) || _.isObject(newValue)
-        ? printComplexValues(value, newValue) : printSimpleValues(value, newValue);
       return `${result}Property '${nodeName}' was updated. From ${printValue} to ${printNewValue}\n`;
     }
     return '';
