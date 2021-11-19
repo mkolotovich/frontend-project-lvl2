@@ -4,7 +4,8 @@
   "description": "difference generator",
   "main": "parsers.js",
   "scripts": {
-    "test": "jest --watchAll"
+    "test": "jest",
+    "testdev": "jest --watchAll"
   },
   "repository": {
     "type": "git",
