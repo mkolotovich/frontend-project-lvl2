@@ -6,7 +6,7 @@ import compareFiles from './compareFiles.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const getFixturePath = (filename) => path.resolve(__dirname, '__fixtures__', filename);
+const getFixturePath = (filename) => path.resolve(__dirname, '..', '__fixtures__', filename);
 
 const parseFiles = (file1, file2, formatName) => {
   const fileExt1 = path.extname(file1);

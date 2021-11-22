@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "difference generator",
-  "main": "parsers.js",
+  "main": "src/parsers.js",
   "scripts": {
     "test": "jest",
     "testdev": "jest --watchAll"
@@ -16,7 +16,7 @@
     "generator"
   ],
   "bin": {
-    "gendiff": "gendiff.js"
+    "gendiff": "bin/gendiff.js"
   },
   "author": "Mike Kolotovich",
   "license": "ISC",
