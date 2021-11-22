@@ -1,18 +1,19 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { fileURLToPath } from 'url';
 import yaml from 'js-yaml';
 import compareFiles from './compareFiles.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const getFixturePath = (filename) => path.resolve(__dirname, '..', '__fixtures__', filename);
-
-const parseFiles = (file1, file2, formatName) => {
-  const fileExt1 = path.extname(file1);
-  const fileExt2 = path.extname(file2);
-  const parse = fileExt1 === '.json' && fileExt2 === '.json' ? JSON.parse : yaml.load;
-  return compareFiles(parse(fs.readFileSync(getFixturePath(file1), 'utf8')), parse(fs.readFileSync(getFixturePath(file2), 'utf8')), formatName);
+const readFile = (filename) => {
+  const fullPath = path.resolve(process.cwd(), '__fixtures__', filename);
+  const data = fs.readFileSync(fullPath).toString();
+  return data;
 };
 
-export default parseFiles;
+export default (path1, path2, formatName) => {
+  const data1 = readFile(path1);
+  const data2 = readFile(path2);
+  const fileExt1 = path.extname(path1);
+  const fileExt2 = path.extname(path2);
+  const parse = fileExt1 === '.json' && fileExt2 === '.json' ? JSON.parse : yaml.load;
+  return compareFiles(parse(data1), parse(data2), formatName);
+};
