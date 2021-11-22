@@ -7,8 +7,10 @@ const chooseFormatter = (formatName, structre) => {
     return plain(structre, '');
   } if (formatName === 'json') {
     return json(structre);
+  } if (formatName === 'stylish') {
+    return stylish(structre, '');
   }
-  return stylish(structre, '');
+  return new Error('incorrect format!');
 };
 
 export default chooseFormatter;
