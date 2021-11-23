@@ -58,10 +58,7 @@ export const stylish = (data, result, depth = 0) => {
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${value}\n`;
     } if (status === 'updated') {
       const [printValue, printNewValue] = printComplexValues(value, newValue, depth);
-      if (_.isObject(value) || _.isObject(newValue)) {
-        return `${result}${makeSpace(spaceSize * depth + 2, '')}- ${name}: ${printValue}\n${result}${makeSpace(spaceSize * depth + 2, '')}+ ${name}: ${printNewValue}\n`;
-      }
-      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${value}\n${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${newValue}\n`;
+      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printNewValue}\n`;
     }
     return `${result}${makeSpace(spaceSize ** depth + 2, '')}  ${name}: ${value}\n`;
   }
