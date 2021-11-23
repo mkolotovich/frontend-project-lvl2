@@ -2,7 +2,7 @@ import { stylish } from './stylish.js';
 import plain from './plain.js';
 import json from './json.js';
 
-const chooseFormatter = (formatName, structre) => {
+const chooseFormatter = (formatName = 'stylish', structre) => {
   if (formatName === 'plain') {
     return plain(structre, '');
   } if (formatName === 'json') {
