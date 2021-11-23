@@ -51,10 +51,9 @@ export const stylish = (data, result, depth = 0) => {
   } = data;
   if (isLeaf(data)) {
     const [printValue, printNewValue] = printComplexValues(value, newValue, depth);
-    if (status === 'added') {
-      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printValue}\n`;
-    } if (status === 'removed') {
-      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n`;
+    const symbol = status === 'added' ? '+' : '-';
+    if (status === 'added' || status === 'removed') {
+      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}${symbol} ${name}: ${printValue}\n`;
     } if (status === 'updated') {
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printNewValue}\n`;
     }
