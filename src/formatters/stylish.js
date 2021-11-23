@@ -22,8 +22,8 @@ const replacer = (obj, size, acc = '') => {
     return replacer(value, size + depthSpaceSize, `${acc}${makeSpace(size + depthSpaceSize, '')}${key}: {\n`);
   }
   if (tail !== undefined) {
-    const result = `${acc}${makeSpace(size + depthSpaceSize, '')}  ${key}: ${value}\n`;
-    return result + replacer(Object.fromEntries([tail]), size + spaceSize, acc);
+    const result = `${acc}${makeSpace(size + depthSpaceSize, '')}${key}: ${value}\n`;
+    return `${result + replacer(Object.fromEntries([tail]), size, acc) + makeSpace(size + depthSpaceSize, '')}}\n`;
   }
   return `${acc}${makeSpace(size + depthSpaceSize, '')}${key}: ${value}\n`;
 };
@@ -54,8 +54,7 @@ export const stylish = (data, result, depth = 0) => {
     if (status === 'added') {
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printValue}\n`;
     } if (status === 'removed') {
-      if (_.isObject(value)) return `${result}${makeSpace(spaceSize, '')}- ${name}: {\n${replacer(value, spaceSize * depth)}${makeSpace(spaceSize * depth + 6, '')}}\n${makeSpace(spaceSize * depth + 2, '')}}\n`;
-      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${value}\n`;
+      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n`;
     } if (status === 'updated') {
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printNewValue}\n`;
     }
