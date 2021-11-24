@@ -101,12 +101,7 @@ const sort = (arr, acc = [], subChildren) => {
   }
   const [next] = tail;
   if (head.slice(1).includes('.') && next.includes(_.last(head.split('.')))) {
-    const children = arr.filter((item) => {
-      if (item.includes(head)) {
-        return true;
-      }
-      return false;
-    });
+    const children = arr.filter((item) => item.includes(head));
     if (children.length > tail.length) {
       return sort(tail, [...acc, head], []);
     }
