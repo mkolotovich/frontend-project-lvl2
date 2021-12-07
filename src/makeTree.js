@@ -55,12 +55,12 @@ const getValue = (node, file1, file2) => {
   return _.get(file2, node.slice(1));
 };
 
-const makeLeaf = (name, file1, file2) => ({
-  name: _.last(name.slice(1).split('.')),
-  type: 'leaf',
-  status: chooseType(name, file1, file2),
-  value: getValue(name, file1, file2),
-});
+// const makeLeaf = (name, file1, file2) => ({
+//   name: _.last(name.slice(1).split('.')),
+//   type: 'leaf',
+//   status: chooseType(name, file1, file2),
+//   value: getValue(name, file1, file2),
+// });
 
 const makeChangedLeaf = (name, file1, file2) => ({
   name: _.last(name.slice(1).split('.')),
@@ -82,10 +82,12 @@ const makeTree = (keys, file1, file2, acc) => {
     } if (chooseType(header, file1, file2) === 'updated') {
       return makeTree(rest, file1, file2, [...acc, makeChangedLeaf(header, file1, file2)]);
     }
-    return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2)]);
+    // return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2)]);
+    return makeTree(rest, file1, file2, [...acc, makeChangedLeaf(header, file1, file2)]);
   }
   if (chooseType(header, file1, file2) !== 'unchanged') {
-    return makeLeaf(header, file1, file2);
+    // return makeLeaf(header, file1, file2);
+    return makeChangedLeaf(header, file1, file2);
   }
   return makeTree(rest, file1, file2, []);
 };
@@ -118,9 +120,9 @@ const buildTree = (file1, file2) => {
   const sortedKeys = _.sortBy(keysArray);
   const groups = sortedKeys.filter((item) => !item.slice(1).includes('.'));
   const groupKeys = groups.map((item) => sortedKeys.filter((el) => el.includes(item)));
-  sort(groupKeys[0]);
   const res = groupKeys.map((item) => {
     const sorted = sort(item);
+    // const sorted = _.sortBy(item, ['name']);
     if (Array.isArray(makeTree(sorted, file1, file2))) {
       const [group] = sorted;
       return makeNode(group.slice(1), makeTree(sorted, file1, file2));
