@@ -8,13 +8,15 @@
           "name": "follow",
           "type": "leaf",
           "status": "added",
-          "value": false
+          "value": false,
+          "newValue": false
         },
         {
           "name": "setting1",
           "type": "leaf",
           "status": "unchanged",
-          "value": "Value 1"
+          "value": "Value 1",
+          "newValue": "Value 1"
         },
         {
           "name": "setting2",
@@ -33,13 +35,17 @@
           "name": "setting4",
           "type": "leaf",
           "status": "added",
-          "value": "blah blah"
+          "value": "blah blah",
+          "newValue": "blah blah"
         },
         {
           "name": "setting5",
           "type": "leaf",
           "status": "added",
           "value": {
+            "key5": "value5"
+          },
+          "newValue": {
             "key5": "value5"
           }
         },
@@ -63,13 +69,15 @@
               "name": "key",
               "type": "leaf",
               "status": "unchanged",
-              "value": "value"
+              "value": "value",
+              "newValue": "value"
             },
             {
               "name": "ops",
               "type": "leaf",
               "status": "added",
-              "value": "vops"
+              "value": "vops",
+              "newValue": "vops"
             }
           ],
           "type": "node"
@@ -91,7 +99,8 @@
           "name": "foo",
           "type": "leaf",
           "status": "unchanged",
-          "value": "bar"
+          "value": "bar",
+          "newValue": "bar"
         },
         {
           "name": "nest",
@@ -121,6 +130,14 @@
       "type": "leaf",
       "status": "added",
       "value": {
+        "deep": {
+          "id": {
+            "number": 45
+          }
+        },
+        "fee": 100500
+      },
+      "newValue": {
         "deep": {
           "id": {
             "number": 45
