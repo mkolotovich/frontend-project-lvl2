@@ -9,7 +9,7 @@ const readFile = (filename) => {
   return data;
 };
 
-export default (path1, path2, formatName) => {
+export default (path1, path2, formatName = 'stylish') => {
   const data1 = readFile(path1);
   const data2 = readFile(path2);
   const fileExt1 = path.extname(path1);
