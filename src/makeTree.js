@@ -20,19 +20,15 @@ const getKeys = (obj, keys, path, obj1) => {
 };
 
 const isValueObject = (node, file1, file2) => {
-  if (_.isObject(_.get(file1, node.slice(1))) && _.isObject(_.get(file2, node.slice(1)))) {
+  if (_.isPlainObject(_.get(file1, node.slice(1)))
+  && _.isPlainObject(_.get(file2, node.slice(1)))) {
     return true;
   }
   return false;
 };
 
 const chooseType = (node, file1, file2) => {
-  // if (isValueObject(node, file1, file2)
-  // || _.get(file1, node.slice(1)) === _.get(file2, node.slice(1))) {
-  //   return 'unchanged';
-  // }
-  if (_.isPlainObject(_.get(file1, node.slice(1)))
-  && _.isPlainObject(_.get(file2, node.slice(1)))) {
+  if (isValueObject(node, file1, file2)) {
     return 'nested';
   }
   if (_.get(file1, node.slice(1)) === _.get(file2, node.slice(1))) {
@@ -48,7 +44,6 @@ const chooseType = (node, file1, file2) => {
   return 'added';
 };
 
-// const makeNode = (name, children) => ({
 const makeNode = (name, children, file1, file2) => ({
   name: _.last(name.slice(1).split('.')),
   children,
@@ -86,7 +81,6 @@ const makeTree = (keys, file1, file2, acc) => {
     }
     return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2)]);
   }
-  // if (chooseType(header, file1, file2) !== 'unchanged') {
   if (chooseType(header, file1, file2) !== 'nested') {
     return makeLeaf(header, file1, file2);
   }
@@ -125,7 +119,6 @@ const buildTree = (file1, file2) => {
     const sorted = sort(item);
     if (Array.isArray(makeTree(sorted, file1, file2))) {
       const [group] = sorted;
-      // return makeNode(group.slice(1), makeTree(sorted, file1, file2));
       return makeNode(group, makeTree(sorted, file1, file2), file1, file2);
     }
     return makeTree(sorted, file1, file2);
