@@ -63,7 +63,8 @@
                   "newValue": "so much"
                 }
               ],
-              "type": "node"
+              "type": "node",
+              "status": "nested"
             },
             {
               "name": "key",
@@ -80,10 +81,12 @@
               "newValue": "vops"
             }
           ],
-          "type": "node"
+          "type": "node",
+          "status": "nested"
         }
       ],
-      "type": "node"
+      "type": "node",
+      "status": "nested"
     },
     {
       "name": "group1",
@@ -112,7 +115,8 @@
           "newValue": "str"
         }
       ],
-      "type": "node"
+      "type": "node",
+      "status": "nested"
     },
     {
       "name": "group2",
@@ -147,5 +151,6 @@
       }
     }
   ],
-  "type": "node"
+  "type": "node",
+  "status": "unchanged"
 }
