@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "difference generator",
-  "main": "src/parsers.js",
+  "main": "src/compareFiles.js",
   "scripts": {
     "test": "jest",
     "testdev": "jest --watchAll"

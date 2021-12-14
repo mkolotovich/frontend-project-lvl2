@@ -7,7 +7,6 @@ const compareFiles = (file1, file2, formatName = 'stylish') => {
   const parser = parse(file1, file2);
   const data1 = parser(readFile(file1));
   const data2 = parser(readFile(file2));
-  // const tree = buildTree(file1, file2);
   const tree = buildTree(data1, data2);
   return chooseFormatter(formatName, tree);
 };

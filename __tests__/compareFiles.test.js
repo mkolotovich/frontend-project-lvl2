@@ -2,7 +2,6 @@ import { test, expect } from '@jest/globals';
 import * as path from 'path';
 import * as fs from 'fs';
 import { fileURLToPath } from 'url';
-// import parseFiles from '../src/parsers.js';
 import compareFiles from '../src/compareFiles.js';
 
 const __filename = fileURLToPath(import.meta.url);
