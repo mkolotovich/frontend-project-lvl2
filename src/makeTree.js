@@ -87,26 +87,6 @@ const makeTree = (keys, file1, file2, acc) => {
   return makeTree(rest, file1, file2, []);
 };
 
-const sort = (arr, acc = [], subChildren) => {
-  const [head] = arr;
-  const tail = arr.slice(1);
-  if (tail.length === 0) {
-    if (subChildren) {
-      return [...acc, head, ...subChildren];
-    }
-    return [...acc, head];
-  }
-  const [next] = tail;
-  if (head.slice(1).includes('.') && next.includes(_.last(head.split('.')))) {
-    const children = arr.filter((item) => item.includes(head));
-    if (children.length > tail.length) {
-      return sort(tail, [...acc, head], []);
-    }
-    return sort([...tail.slice(children.length - 1)], acc, children);
-  }
-  return sort(tail, [...acc, head], subChildren);
-};
-
 const buildTree = (file1, file2) => {
   const keys = new Set();
   getKeys(file1, keys, '', file2);
@@ -116,9 +96,12 @@ const buildTree = (file1, file2) => {
   const groups = sortedKeys.filter((item) => !item.slice(1).includes('.'));
   const groupKeys = groups.map((item) => sortedKeys.filter((el) => el.includes(item)));
   const res = groupKeys.map((item) => {
-    const sorted = sort(item);
+    const [group] = item;
+    const sorted = _.sortBy(item, (x) => {
+      const sortKeys = x.split('.');
+      return sortKeys.map((i) => _.padStart(i, group.length)).join('');
+    });
     if (Array.isArray(makeTree(sorted, file1, file2))) {
-      const [group] = sorted;
       return makeNode(group, makeTree(sorted, file1, file2), file1, file2);
     }
     return makeTree(sorted, file1, file2);
