@@ -7,8 +7,6 @@ import getFileFormat from './getFileFormat.js';
 const getData = (filepath) => readFile(filepath);
 
 const compareFiles = (filepath1, filepath2, formatName = 'stylish') => {
-  // const data1 = readFile(filepath1);
-  // const data2 = readFile(filepath2);
   const data1 = getData(filepath1);
   const data2 = getData(filepath2);
   const format1 = getFileFormat(filepath1);
