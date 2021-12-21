@@ -45,10 +45,10 @@ const printComplexValues = (value, newValue, depth) => {
   return [value, newValue];
 };
 
-const chooseSymbol = (status) => {
-  if (status === 'added') {
+const chooseSymbol = (type) => {
+  if (type === 'added') {
     return '+';
-  } if (status === 'removed') {
+  } if (type === 'removed') {
     return '-';
   }
   return ' ';
