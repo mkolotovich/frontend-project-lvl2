@@ -45,15 +45,6 @@ const printComplexValues = (value, newValue, depth) => {
   return [value, newValue];
 };
 
-const chooseSymbol = (type) => {
-  if (type === 'added') {
-    return '+';
-  } if (type === 'removed') {
-    return '-';
-  }
-  return ' ';
-};
-
 export const stylish = (data, result = '', depth = 0) => {
   const {
     name, value, status, newValue, children,
@@ -63,7 +54,13 @@ export const stylish = (data, result = '', depth = 0) => {
     if (status === 'updated') {
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printNewValue}\n`;
     }
-    return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}${chooseSymbol(status)} ${name}: ${printValue}\n`;
+    if (status === 'added') {
+      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printValue}\n`;
+    }
+    if (status === 'removed') {
+      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n`;
+    }
+    return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${name}: ${printValue}\n`;
   }
   const line = children.map((item) => stylish(item, makeLine(item, depth + 1), depth + 1));
   if (name === '') return `{\n${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}`;
