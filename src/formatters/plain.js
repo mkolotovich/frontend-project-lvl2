@@ -1,36 +1,15 @@
 import _ from 'lodash';
 import { isLeaf } from './stylish.js';
 
-// const printSimpleValues = (value, newValue) => {
-//   if (typeof value === 'string' && typeof newValue === 'string') {
-//     return [`'${value}'`, `'${newValue}'`];
-//   }
-//   if (typeof value === 'string') {
-//     return [`'${value}'`, newValue];
-//   }
-//   if (typeof newValue === 'string') {
-//     return [value, `'${newValue}'`];
-//   }
-//   return [value, newValue];
-// };
-
-// const printComplexValues = (value, newValue) => {
-//   if (_.isObject(value)) {
-//     return ['[complex value]', `'${newValue}'`];
-//   }
-//   if (_.isObject(newValue)) {
-//     return [value, '[complex value]'];
-//   }
-//   return [value, newValue];
-// };
-
 const printValues = (value, newValue) => {
-  if (_.isObject(value)) {
-    return ['[complex value]', `'${newValue}'`];
-  }
-  if (_.isObject(newValue)) {
-    return [value, '[complex value]'];
-  }
+  // if (_.isObject(value)) {
+  //   return ['[complex value]', `'${newValue}'`];
+  // }
+  // if (_.isObject(newValue)) {
+  //   return [value, '[complex value]'];
+  // }
+  const printValue = _.isObject(value) ? '[complex value]' : value;
+  const printNewValue = _.isObject(newValue) ? '[complex value]' : newValue;
   if (typeof value === 'string' && typeof newValue === 'string') {
     return [`'${value}'`, `'${newValue}'`];
   }
@@ -40,7 +19,8 @@ const printValues = (value, newValue) => {
   if (typeof newValue === 'string') {
     return [value, `'${newValue}'`];
   }
-  return [value, newValue];
+  // return [value, newValue];
+  return [printValue, printNewValue];
 };
 
 const plain = (tree, result = '', path = '') => {
@@ -49,8 +29,6 @@ const plain = (tree, result = '', path = '') => {
   } = tree;
   if (isLeaf(tree)) {
     const nodeName = `${path}${name}`.slice(1);
-    // const [printValue, printNewValue] = _.isObject(value) || _.isObject(newValue)
-    //   ? printComplexValues(value, newValue) : printSimpleValues(value, newValue);
     const [printValue, printNewValue] = printValues(value, newValue);
     switch (status) {
       case 'added':
