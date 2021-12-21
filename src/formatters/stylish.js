@@ -54,7 +54,8 @@ const chooseSymbol = (status) => {
   return ' ';
 };
 
-export const stylish = (data, result, depth = 0) => {
+// export const stylish = (data, result, depth = 0) => {
+export const stylish = (data, result = '', depth = 0) => {
   const {
     name, value, status, newValue, children,
   } = data;

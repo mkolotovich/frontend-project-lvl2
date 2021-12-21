@@ -2,13 +2,15 @@ import { stylish } from './stylish.js';
 import plain from './plain.js';
 import json from './json.js';
 
-const formatData = (formatName, structre) => {
+const formatData = (formatName, structure) => {
   if (formatName === 'plain') {
-    return plain(structre, '');
+    // return plain(structure, '');
+    return plain(structure);
   } if (formatName === 'json') {
-    return json(structre);
+    return json(structure);
   } if (formatName === 'stylish') {
-    return stylish(structre, '');
+    // return stylish(structure, '');
+    return stylish(structure);
   }
   return new Error('incorrect format!');
 };
