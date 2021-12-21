@@ -11,9 +11,9 @@ const compareFiles = (filepath1, filepath2, formatName = 'stylish') => {
   const data2 = getData(filepath2);
   const format1 = getFileFormat(filepath1);
   const format2 = getFileFormat(filepath2);
-  const file1 = parse(data1, format1);
-  const file2 = parse(data2, format2);
-  const tree = buildTree(file1, file2);
+  const parsedData1 = parse(data1, format1);
+  const parsedData2 = parse(data2, format2);
+  const tree = buildTree(parsedData1, parsedData2);
   return chooseFormatter(formatName, tree);
 };
 

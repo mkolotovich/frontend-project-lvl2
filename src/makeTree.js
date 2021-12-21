@@ -100,21 +100,21 @@ const sort = (item, group) => _.sortBy(item, (x) => {
   return sortKeys.map((i) => _.padStart(i, maxKeyLength + 1)).join('');
 });
 
-const buildTree = (file1, file2) => {
+const buildTree = (parsedData1, parsedData2) => {
   const keys = new Set();
-  getKeys(file1, keys, '', file2);
-  getKeys(file2, keys, '', file1);
+  getKeys(parsedData1, keys, '', parsedData2);
+  getKeys(parsedData2, keys, '', parsedData1);
   const keysArray = Array.from(keys);
   const sortedKeys = _.sortBy(keysArray);
   const groups = sortedKeys.filter((item) => !item.slice(1).includes('.'));
   const groupKeys = groups.map((item) => sortedKeys.filter((el) => el.includes(item)));
   const res = groupKeys.map((item) => {
     const [group] = item;
-    if (Array.isArray(makeTree(item, file1, file2))) {
+    if (Array.isArray(makeTree(item, parsedData1, parsedData2))) {
       const sorted = sort(item, group);
-      return makeNode(group, makeTree(sorted, file1, file2), file1, file2);
+      return makeNode(group, makeTree(sorted, parsedData1, parsedData2), parsedData1, parsedData2);
     }
-    return makeTree(item, file1, file2);
+    return makeTree(item, parsedData1, parsedData2);
   });
   const tree = makeNode('', res);
   return tree;
