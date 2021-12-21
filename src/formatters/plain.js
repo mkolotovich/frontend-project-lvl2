@@ -8,18 +8,22 @@ const printValues = (value, newValue) => {
   // if (_.isObject(newValue)) {
   //   return [value, '[complex value]'];
   // }
-  const printValue = _.isObject(value) ? '[complex value]' : value;
-  const printNewValue = _.isObject(newValue) ? '[complex value]' : newValue;
-  if (typeof value === 'string' && typeof newValue === 'string') {
-    return [`'${value}'`, `'${newValue}'`];
-  }
-  if (typeof value === 'string') {
-    return [`'${value}'`, newValue];
-  }
-  if (typeof newValue === 'string') {
-    return [value, `'${newValue}'`];
-  }
+  const objValue = _.isObject(value) ? '[complex value]' : value;
+  const objNewValue = _.isObject(newValue) ? '[complex value]' : newValue;
+  // if (typeof value === 'string' && typeof newValue === 'string') {
+  //   return [`'${value}'`, `'${newValue}'`];
+  // }
+  // if (typeof value === 'string') {
+  //   return [`'${value}'`, newValue];
+  // }
+  // if (typeof newValue === 'string') {
+  //   return [value, `'${newValue}'`];
+  // }
+  const strValue = typeof value === 'string' ? `'${value}'` : value;
+  const strNewValue = typeof newValue === 'string' ? `'${newValue}'` : newValue;
   // return [value, newValue];
+  const printValue = _.isObject(value) ? objValue : strValue;
+  const printNewValue = _.isObject(newValue) ? objNewValue : strNewValue;
   return [printValue, printNewValue];
 };
 
