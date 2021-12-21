@@ -1,14 +1,21 @@
 import _ from 'lodash';
 import { isLeaf } from './stylish.js';
 
-const printValues = (value, newValue) => {
+// const printValues = (value, newValue) => {
+//   const objValue = _.isObject(value) ? '[complex value]' : value;
+//   const objNewValue = _.isObject(newValue) ? '[complex value]' : newValue;
+//   const strValue = typeof value === 'string' ? `'${value}'` : value;
+//   const strNewValue = typeof newValue === 'string' ? `'${newValue}'` : newValue;
+//   const printValue = _.isObject(value) ? objValue : strValue;
+//   const printNewValue = _.isObject(newValue) ? objNewValue : strNewValue;
+//   return [printValue, printNewValue];
+// };
+
+const printValues = (value) => {
   const objValue = _.isObject(value) ? '[complex value]' : value;
-  const objNewValue = _.isObject(newValue) ? '[complex value]' : newValue;
   const strValue = typeof value === 'string' ? `'${value}'` : value;
-  const strNewValue = typeof newValue === 'string' ? `'${newValue}'` : newValue;
   const printValue = _.isObject(value) ? objValue : strValue;
-  const printNewValue = _.isObject(newValue) ? objNewValue : strNewValue;
-  return [printValue, printNewValue];
+  return printValue;
 };
 
 const plain = (tree, result = '', path = '') => {
@@ -17,7 +24,9 @@ const plain = (tree, result = '', path = '') => {
   } = tree;
   if (isLeaf(tree)) {
     const nodeName = `${path}${name}`.slice(1);
-    const [printValue, printNewValue] = printValues(value, newValue);
+    // const [printValue, printNewValue] = printValues(value, newValue);
+    const printValue = printValues(value);
+    const printNewValue = printValues(newValue);
     switch (status) {
       case 'added':
         return `${result}Property '${nodeName}' was added with value: ${printValue}\n`;
