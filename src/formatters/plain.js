@@ -24,7 +24,6 @@ const printComplexValues = (value, newValue) => {
   return [value, newValue];
 };
 
-// const plain = (tree, result, path = '') => {
 const plain = (tree, result = '', path = '') => {
   const {
     name, value, status, newValue, children,
