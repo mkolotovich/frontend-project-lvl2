@@ -69,13 +69,16 @@ const makeTree = (keys, file1, file2, acc = []) => {
 
 const buildTree = (parsedData1, parsedData2) => {
   const keys = _.union(Object.keys(parsedData1), Object.keys(parsedData2));
-  const res = keys.map((item) => {
+  const sortedGroups = _.sortBy(keys);
+  const res = sortedGroups.map((item) => {
     const subKeys1 = _.get(parsedData1, item);
     const subKeys2 = _.get(parsedData2, item);
     if (chooseType(item, parsedData1, parsedData2) === 'nested') {
       const itemKeys = _.union(Object.keys(subKeys1), Object.keys(subKeys2));
-      const sortedKeys = _.sortBy(itemKeys);
-      return makeNode(item, makeTree(sortedKeys, subKeys1, subKeys2), parsedData1, parsedData2);
+      const keyIsObject = itemKeys.filter((el) => isValueObject(el, subKeys1, subKeys2));
+      const keysNotObject = itemKeys.filter((el) => !isValueObject(el, subKeys1, subKeys2));
+      const rightOrderKeys = [...keysNotObject, ...keyIsObject];
+      return makeNode(item, makeTree(rightOrderKeys, subKeys1, subKeys2), parsedData1, parsedData2);
     }
     return makeLeaf(item, parsedData1, parsedData2);
   });
