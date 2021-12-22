@@ -1,27 +1,6 @@
 import _ from 'lodash';
 
-// const getKeys = (obj, keys, path, obj1) => {
-//   const cb = ([key, value]) => {
-//     if (!_.isObject(value)) {
-//       keys.add(`${path}.${key}`);
-//     } else {
-//       const fullPath = `${path}.${key}`;
-//       keys.add(fullPath);
-//       if (!_.isObject(_.get(obj1, fullPath.slice(1)))) {
-//         return [];
-//       }
-//       return getKeys(value, keys, fullPath, obj1);
-//     }
-//     return keys;
-//   };
-//   const objKeys = Object.entries(obj);
-//   objKeys.map((child) => cb(child));
-//   return keys;
-// };
-
 const isValueObject = (node, file1, file2) => {
-  // if (_.isPlainObject(_.get(file1, node.slice(1)))
-  // && _.isPlainObject(_.get(file2, node.slice(1)))) {
   if (_.isPlainObject(_.get(file1, node)) && _.isPlainObject(_.get(file2, node))) {
     return true;
   }
@@ -32,16 +11,12 @@ const chooseType = (node, file1, file2) => {
   if (isValueObject(node, file1, file2)) {
     return 'nested';
   }
-  // if (_.get(file1, node.slice(1)) === _.get(file2, node.slice(1))) {
   if (_.get(file1, node) === _.get(file2, node)) {
     return 'unchanged';
   }
-  // if (_.has(file1, node.slice(1)) && _.has(file2, node.slice(1))
-  // && _.get(file1, node.slice(1)) !== _.get(file2, node.slice(1))) {
   if (_.has(file1, node) && _.has(file2, node) && _.get(file1, node) !== _.get(file2, node)) {
     return 'updated';
   }
-  // if (_.has(file1, node.slice(1))) {
   if (_.has(file1, node)) {
     return 'removed';
   }
@@ -49,7 +24,6 @@ const chooseType = (node, file1, file2) => {
 };
 
 const makeNode = (name, children, file1, file2) => ({
-  // name: _.last(name.slice(1).split('.')),
   name,
   children,
   type: 'node',
@@ -57,45 +31,19 @@ const makeNode = (name, children, file1, file2) => ({
 });
 
 const getValue = (node, file1, file2) => {
-  // if (_.has(file1, node.slice(1))) {
   if (_.has(file1, node)) {
-    // return _.get(file1, node.slice(1));
     return _.get(file1, node);
   }
-  // return _.get(file2, node.slice(1));
   return _.get(file2, node);
 };
 
 const makeLeaf = (name, file1, file2) => ({
-  // name: _.last(name.slice(1).split('.')),
   name,
   type: 'leaf',
   status: chooseType(name, file1, file2),
   value: getValue(name, file1, file2),
-  // newValue: _.get(file2, name.slice(1)),
   newValue: _.get(file2, name),
 });
-
-// const makeTree = (keys, file1, file2, acc) => {
-//   if (keys.length === 0) {
-//     return _.sortBy(acc, ['name']);
-//   }
-//   const [header] = keys;
-//   const rest = keys.slice(1);
-//   if (header.slice(1).includes('.')) {
-//     if (isValueObject(header, file1, file2)) {
-//       return makeTree([], file1, file2,
-//         [...acc, makeNode(header, makeTree(rest, file1, file2, []), file1, file2)]);
-//     } if (chooseType(header, file1, file2) === 'updated') {
-//       return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2)]);
-//     }
-//     return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2)]);
-//   }
-//   if (chooseType(header, file1, file2) !== 'nested') {
-//     return makeLeaf(header, file1, file2);
-//   }
-//   return makeTree(rest, file1, file2, []);
-// };
 
 const makeTree = (keys, file1, file2, acc = []) => {
   if (keys.length === 0) {
@@ -121,7 +69,6 @@ const makeTree = (keys, file1, file2, acc = []) => {
 
 const buildTree = (parsedData1, parsedData2) => {
   const keys = _.union(Object.keys(parsedData1), Object.keys(parsedData2));
-  // const res = makeTree(keys, parsedData1, parsedData2);
   const res = keys.map((item) => {
     const subKeys1 = _.get(parsedData1, item);
     const subKeys2 = _.get(parsedData2, item);
