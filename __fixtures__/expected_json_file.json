@@ -64,7 +64,7 @@
                 }
               ],
               "type": "node",
-              "status": "nested"
+              "status": "unchanged"
             },
             {
               "name": "key",
@@ -82,7 +82,7 @@
             }
           ],
           "type": "node",
-          "status": "nested"
+          "status": "unchanged"
         }
       ],
       "type": "node",
