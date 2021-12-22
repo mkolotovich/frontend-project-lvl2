@@ -61,10 +61,7 @@ const makeTree = (keys, file1, file2, acc = []) => {
     return makeTree([], subKeys1, subKeys2,
       [...acc, makeNode(header, makeTree(sortedKeys, subKeys1, subKeys2, []), subKeys1, subKeys2)]);
   }
-  if (chooseType(header, file1, file2) !== 'nested') {
-    return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2)]);
-  }
-  return [];
+  return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2)]);
 };
 
 const buildTree = (parsedData1, parsedData2) => {
