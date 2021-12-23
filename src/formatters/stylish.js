@@ -35,14 +35,11 @@ const makeLine = (item, depth) => {
   return '';
 };
 
-const printComplexValues = (value, newValue, depth) => {
+const printComplexValues = (value, depth) => {
   if (_.isObject(value)) {
-    return [`{\n${replacer(value, depthSpaceSize * depth)}${makeSpace(depthSpaceSize * depth, '')}}`, newValue];
+    return `{\n${replacer(value, depthSpaceSize * depth)}${makeSpace(depthSpaceSize * depth, '')}}`;
   }
-  if (_.isObject(newValue)) {
-    return [value, `{\n${replacer(newValue, depthSpaceSize * depth)}${makeSpace(depthSpaceSize * depth, '')}}`];
-  }
-  return [value, newValue];
+  return value;
 };
 
 export const stylish = (tree) => {
@@ -51,7 +48,8 @@ export const stylish = (tree) => {
       name, value, type, newValue, children,
     } = data;
     if (isLeaf(data)) {
-      const [printValue, printNewValue] = printComplexValues(value, newValue, depth);
+      const printValue = printComplexValues(value, depth);
+      const printNewValue = printComplexValues(newValue, depth);
       if (type === 'updated') {
         return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printNewValue}\n`;
       }
