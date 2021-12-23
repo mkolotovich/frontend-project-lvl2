@@ -35,19 +35,6 @@ const makeTree = (keys, file1, file2, acc = []) => {
   }
   const [header] = keys;
   const rest = keys.slice(1);
-  const nodeType = { };
-  if (isValueObject(header, file1, file2)) {
-    nodeType.type = 'nested';
-  } else if (_.get(file1, header) === _.get(file2, header)) {
-    nodeType.type = 'unchanged';
-  } else if (_.has(file1, header) && _.has(file2, header)
-  && _.get(file1, header) !== _.get(file2, header)) {
-    nodeType.type = 'updated';
-  } else if (_.has(file1, header)) {
-    nodeType.type = 'removed';
-  } else {
-    nodeType.type = 'added';
-  }
   if (isValueObject(header, file1, file2)) {
     const subKeys1 = _.get(file1, header);
     const subKeys2 = _.get(file2, header);
@@ -56,9 +43,19 @@ const makeTree = (keys, file1, file2, acc = []) => {
     const keysNotObject = innerKeys.filter((el) => !isValueObject(el, subKeys1, subKeys2));
     const sortedKeys = [...keysNotObject, ...keyIsObject];
     return makeTree(rest, file1, file2,
-      [...acc, makeNode(header, makeTree(sortedKeys, subKeys1, subKeys2, []), nodeType.type)]);
+      [...acc, makeNode(header, makeTree(sortedKeys, subKeys1, subKeys2, []), 'nested')]);
   }
-  return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2, nodeType.type)]);
+  if (_.get(file1, header) === _.get(file2, header)) {
+    return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2, 'unchanged')]);
+  }
+  if (_.has(file1, header) && _.has(file2, header)
+  && _.get(file1, header) !== _.get(file2, header)) {
+    return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2, 'updated')]);
+  }
+  if (_.has(file1, header)) {
+    return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2, 'removed')]);
+  }
+  return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2, 'added')]);
 };
 
 const buildTree = (parsedData1, parsedData2) => {
