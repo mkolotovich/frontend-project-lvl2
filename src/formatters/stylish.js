@@ -45,24 +45,27 @@ const printComplexValues = (value, newValue, depth) => {
   return [value, newValue];
 };
 
-export const stylish = (data, result = '', depth = 0) => {
-  const {
-    name, value, type, newValue, children,
-  } = data;
-  if (isLeaf(data)) {
-    const [printValue, printNewValue] = printComplexValues(value, newValue, depth);
-    if (type === 'updated') {
-      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printNewValue}\n`;
+export const stylish = (tree) => {
+  const cb = (data, result = '', depth = 0) => {
+    const {
+      name, value, type, newValue, children,
+    } = data;
+    if (isLeaf(data)) {
+      const [printValue, printNewValue] = printComplexValues(value, newValue, depth);
+      if (type === 'updated') {
+        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printNewValue}\n`;
+      }
+      if (type === 'added') {
+        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printValue}\n`;
+      }
+      if (type === 'removed') {
+        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n`;
+      }
+      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${name}: ${printValue}\n`;
     }
-    if (type === 'added') {
-      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printValue}\n`;
-    }
-    if (type === 'removed') {
-      return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n`;
-    }
-    return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${name}: ${printValue}\n`;
-  }
-  const line = children.map((item) => stylish(item, makeLine(item, depth + 1), depth + 1));
-  if (name === '') return `{\n${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}`;
-  return `${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}\n`;
+    const line = children.map((item) => cb(item, makeLine(item, depth + 1), depth + 1));
+    if (name === '') return `{\n${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}`;
+    return `${result}${line.join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}\n`;
+  };
+  return cb(tree);
 };
