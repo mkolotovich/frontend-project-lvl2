@@ -10,8 +10,7 @@ const isValueObject = (node, file1, file2) => {
 const makeNode = (name, children, type) => ({
   name,
   children,
-  type: 'node',
-  status: type,
+  type,
 });
 
 const getValue = (node, file1, file2) => {
@@ -23,8 +22,7 @@ const getValue = (node, file1, file2) => {
 
 const makeLeaf = (name, file1, file2, type) => ({
   name,
-  type: 'leaf',
-  status: type,
+  type,
   value: getValue(name, file1, file2),
   newValue: _.get(file2, name),
 });
@@ -47,12 +45,10 @@ const makeTree = (keys, file1, file2, acc = []) => {
   }
   if (_.get(file1, header) === _.get(file2, header)) {
     return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2, 'unchanged')]);
-  }
-  if (_.has(file1, header) && _.has(file2, header)
+  } if (_.has(file1, header) && _.has(file2, header)
   && _.get(file1, header) !== _.get(file2, header)) {
     return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2, 'updated')]);
-  }
-  if (_.has(file1, header)) {
+  } if (_.has(file1, header)) {
     return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2, 'removed')]);
   }
   return makeTree(rest, file1, file2, [...acc, makeLeaf(header, file1, file2, 'added')]);
@@ -62,7 +58,7 @@ const buildTree = (parsedData1, parsedData2) => {
   const keys = _.union(Object.keys(parsedData1), Object.keys(parsedData2));
   const sortedGroups = _.sortBy(keys);
   const res = makeTree(sortedGroups, parsedData1, parsedData2);
-  const tree = makeNode('', res);
+  const tree = makeNode('', res, 'nested');
   return tree;
 };
 

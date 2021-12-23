@@ -10,7 +10,7 @@ const makeSpace = (size, space) => {
   return space;
 };
 
-export const isLeaf = (node) => node.type !== 'node';
+export const isLeaf = (node) => node.type !== 'nested';
 
 const replacer = (obj, size, acc = '') => {
   const [head, tail] = Object.entries(obj);
@@ -47,17 +47,17 @@ const printComplexValues = (value, newValue, depth) => {
 
 export const stylish = (data, result = '', depth = 0) => {
   const {
-    name, value, status, newValue, children,
+    name, value, type, newValue, children,
   } = data;
   if (isLeaf(data)) {
     const [printValue, printNewValue] = printComplexValues(value, newValue, depth);
-    if (status === 'updated') {
+    if (type === 'updated') {
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printNewValue}\n`;
     }
-    if (status === 'added') {
+    if (type === 'added') {
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printValue}\n`;
     }
-    if (status === 'removed') {
+    if (type === 'removed') {
       return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n`;
     }
     return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${name}: ${printValue}\n`;

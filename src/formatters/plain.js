@@ -11,13 +11,13 @@ const printValues = (value) => {
 const plain = (tree) => {
   const cb = (node, result = '', path = '') => {
     const {
-      name, value, status, newValue, children,
+      name, value, type, newValue, children,
     } = node;
     if (isLeaf(node)) {
       const nodeName = `${path}${name}`.slice(1);
       const printValue = printValues(value);
       const printNewValue = printValues(newValue);
-      switch (status) {
+      switch (type) {
         case 'added':
           return `${result}Property '${nodeName}' was added with value: ${printValue}\n`;
         case 'removed':

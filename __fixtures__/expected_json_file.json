@@ -6,42 +6,36 @@
       "children": [
         {
           "name": "follow",
-          "type": "leaf",
-          "status": "added",
+          "type": "added",
           "value": false,
           "newValue": false
         },
         {
           "name": "setting1",
-          "type": "leaf",
-          "status": "unchanged",
+          "type": "unchanged",
           "value": "Value 1",
           "newValue": "Value 1"
         },
         {
           "name": "setting2",
-          "type": "leaf",
-          "status": "removed",
+          "type": "removed",
           "value": 200
         },
         {
           "name": "setting3",
-          "type": "leaf",
-          "status": "updated",
+          "type": "updated",
           "value": true,
           "newValue": null
         },
         {
           "name": "setting4",
-          "type": "leaf",
-          "status": "added",
+          "type": "added",
           "value": "blah blah",
           "newValue": "blah blah"
         },
         {
           "name": "setting5",
-          "type": "leaf",
-          "status": "added",
+          "type": "added",
           "value": {
             "key5": "value5"
           },
@@ -57,71 +51,60 @@
               "children": [
                 {
                   "name": "wow",
-                  "type": "leaf",
-                  "status": "updated",
+                  "type": "updated",
                   "value": "",
                   "newValue": "so much"
                 }
               ],
-              "type": "node",
-              "status": "nested"
+              "type": "nested"
             },
             {
               "name": "key",
-              "type": "leaf",
-              "status": "unchanged",
+              "type": "unchanged",
               "value": "value",
               "newValue": "value"
             },
             {
               "name": "ops",
-              "type": "leaf",
-              "status": "added",
+              "type": "added",
               "value": "vops",
               "newValue": "vops"
             }
           ],
-          "type": "node",
-          "status": "nested"
+          "type": "nested"
         }
       ],
-      "type": "node",
-      "status": "nested"
+      "type": "nested"
     },
     {
       "name": "group1",
       "children": [
         {
           "name": "baz",
-          "type": "leaf",
-          "status": "updated",
+          "type": "updated",
           "value": "bas",
           "newValue": "bars"
         },
         {
           "name": "foo",
-          "type": "leaf",
-          "status": "unchanged",
+          "type": "unchanged",
           "value": "bar",
           "newValue": "bar"
         },
         {
           "name": "nest",
-          "type": "leaf",
-          "status": "updated",
+          "type": "updated",
           "value": {
             "key": "value"
           },
           "newValue": "str"
         }
       ],
-      "type": "node",
-      "status": "nested"
+      "type": "nested"
     },
     {
       "name": "group2",
-      "type": "leaf",
-      "status": "removed",
+      "type": "removed",
       "value": {
         "abc": 12345,
         "deep": {
@@ -131,8 +114,7 @@
     },
     {
       "name": "group3",
-      "type": "leaf",
-      "status": "added",
+      "type": "added",
       "value": {
         "deep": {
           "id": {
@@ -151,5 +133,5 @@
       }
     }
   ],
-  "type": "node"
+  "type": "nested"
 }
