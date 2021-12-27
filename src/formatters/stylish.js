@@ -16,7 +16,7 @@ const stringify = (value, replacer = ' ', spaceCount = 1) => {
   if (!_.isObject(value)) {
     return `${value}`;
   }
-  const cb = (currentValue, replaceInner = ' ', depth = 1) => {
+  const cb = (currentValue, replaceInner, depth) => {
     const entries = Object.entries(currentValue);
     return entries.reduce((acc, [key, val]) => {
       const newAcc = typeof val !== 'object' ? `${replaceInner.repeat(depth)}${key}: ${val}\n` : `${replaceInner.repeat(depth)}${key}: ${cb(val, replaceInner, depth + depthSpaceSize)}${replaceInner.repeat(depth)}}\n`;
