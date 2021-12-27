@@ -12,20 +12,18 @@ const makeSpace = (size, space) => {
 
 export const isLeaf = (node) => node.type !== 'nested';
 
-const replacer = (obj, size, acc = '') => {
-  const [head, tail] = Object.entries(obj);
-  const [key, value] = head;
-  if (_.isObject(value)) {
-    if (tail) {
-      return replacer(value, size + depthSpaceSize, `${acc}${makeSpace(size + depthSpaceSize, '')}${key}: {\n`) + replacer(Object.fromEntries([tail]), size, `${makeSpace(size + 8, '')}}\n${makeSpace(size + depthSpaceSize, '')}}\n`);
-    }
-    return replacer(value, size + depthSpaceSize, `${acc}${makeSpace(size + depthSpaceSize, '')}${key}: {\n`);
+const stringify = (value, replacer = ' ', spaceCount = 1) => {
+  if (!_.isObject(value)) {
+    return `${value}`;
   }
-  if (tail !== undefined) {
-    const result = `${acc}${makeSpace(size + depthSpaceSize, '')}${key}: ${value}\n`;
-    return `${result + replacer(Object.fromEntries([tail]), size, acc) + makeSpace(size + depthSpaceSize, '')}}\n`;
-  }
-  return `${acc}${makeSpace(size + depthSpaceSize, '')}${key}: ${value}\n`;
+  const cb = (currentValue, replaceInner = ' ', depth = 1) => {
+    const entries = Object.entries(currentValue);
+    return entries.reduce((acc, [key, val]) => {
+      const newAcc = typeof val !== 'object' ? `${replaceInner.repeat(depth)}${key}: ${val}\n` : `${replaceInner.repeat(depth)}${key}: ${cb(val, replaceInner, depth + depthSpaceSize)}${replaceInner.repeat(depth)}}\n`;
+      return acc + newAcc;
+    }, '{\n');
+  };
+  return `${cb(value, replacer, spaceCount)}${makeSpace(spaceCount - depthSpaceSize, '')}}`;
 };
 
 const makeLine = (item, depth) => {
@@ -35,21 +33,14 @@ const makeLine = (item, depth) => {
   return '';
 };
 
-const printComplexValues = (value, depth) => {
-  if (_.isObject(value)) {
-    return `{\n${replacer(value, depthSpaceSize * depth)}${makeSpace(depthSpaceSize * depth, '')}}`;
-  }
-  return value;
-};
-
 export const stylish = (tree) => {
   const cb = (data, result = '', depth = 0) => {
     const {
       name, value, type, newValue, children,
     } = data;
     if (isLeaf(data)) {
-      const printValue = printComplexValues(value, depth);
-      const printNewValue = printComplexValues(newValue, depth);
+      const printValue = stringify(value, ' ', (depth + 1) * depthSpaceSize);
+      const printNewValue = stringify(newValue, ' ', (depth + 1) * depthSpaceSize);
       if (type === 'updated') {
         return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printNewValue}\n`;
       }
