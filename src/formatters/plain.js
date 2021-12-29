@@ -27,7 +27,7 @@ const plain = (tree) => {
       case 'removed':
         return `${result}Property '${nodeName}' was removed\n`;
       case 'updated':
-        return `${result}Property '${nodeName}' was updated. From ${printedValue} to ${printedNewValue}\n`;
+        return [result, 'Property ', `'${nodeName}'`, ' was updated. From ', printedValue, ' to ', `${printedNewValue}`, '\n'].join('');
       default:
         return '';
     }
