@@ -19,17 +19,17 @@ const plain = (tree) => {
     const printedNewValue = printValue(newValue);
     switch (type) {
       case 'root':
-        return children.map((item) => cb(item, result, `${path}${name}.`)).join('').slice(0, -1);
+        return children.map((item) => cb(item, result, `${path}${name}.`)).join('\n');
       case 'nested':
-        return children.map((item) => cb(item, result, `${path}${name}.`)).join('');
+        return children.flatMap((item) => cb(item, result, `${path}${name}.`)).join('\n');
       case 'added':
-        return `${result}Property '${nodeName}' was added with value: ${printedValue}\n`;
+        return `${result}Property '${nodeName}' was added with value: ${printedValue}`;
       case 'removed':
-        return `${result}Property '${nodeName}' was removed\n`;
+        return `${result}Property '${nodeName}' was removed`;
       case 'updated':
-        return [result, 'Property ', `'${nodeName}'`, ' was updated. From ', printedValue, ' to ', `${printedNewValue}`, '\n'].join('');
+        return `${result}Property '${nodeName}' was updated. From ${printedValue} to ${printedNewValue}`;
       default:
-        return '';
+        return [];
     }
   };
   return cb(tree);
