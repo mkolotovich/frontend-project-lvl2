@@ -3,13 +3,6 @@ import _ from 'lodash';
 const spaceSize = 2;
 const depthSpaceSize = 4;
 
-const makeSpace = (size, space) => {
-  if (size > 0) {
-    return makeSpace(size - 1, `${space} `);
-  }
-  return space;
-};
-
 const stringify = (value, replacer = ' ', spaceCount = 1) => {
   if (!_.isObject(value)) {
     return `${value}`;
@@ -21,12 +14,12 @@ const stringify = (value, replacer = ' ', spaceCount = 1) => {
       return acc + newAcc;
     }, '{\n');
   };
-  return `${cb(value, replacer, spaceCount)}${makeSpace(spaceCount - depthSpaceSize, '')}}`;
+  return `${cb(value, replacer, spaceCount)}${' '.repeat(spaceCount - depthSpaceSize)}}`;
 };
 
 const makeLine = (item, depth) => {
   if (item.type === 'nested') {
-    return `${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${item.key}: {\n`;
+    return `${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}  ${item.key}: {\n`;
   }
   return '';
 };
@@ -40,17 +33,17 @@ const stylish = (tree) => {
     const printNewValue = stringify(newValue, ' ', (depth + 1) * depthSpaceSize);
     switch (type) {
       case 'root':
-        return `{\n${result}${children.map((item) => cb(item, makeLine(item, depth + 1), depth + 1)).join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}`;
+        return `{\n${result}${children.map((item) => cb(item, makeLine(item, depth + 1), depth + 1)).join('\n')}\n${' '.repeat(spaceSize * depth * spaceSize)}}`;
       case 'nested':
-        return `${result}${children.map((item) => cb(item, makeLine(item, depth + 1), depth + 1)).join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}\n`;
+        return `${result}${children.map((item) => cb(item, makeLine(item, depth + 1), depth + 1)).join('\n')}\n${' '.repeat(spaceSize * depth * spaceSize)}}`;
       case 'updated':
-        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${key}: ${printValue}\n${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${key}: ${printNewValue}\n`;
+        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}- ${key}: ${printValue}\n${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}+ ${key}: ${printNewValue}`;
       case 'added':
-        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${key}: ${printValue}\n`;
+        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}+ ${key}: ${printValue}`;
       case 'removed':
-        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${key}: ${printValue}\n`;
+        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}- ${key}: ${printValue}`;
       default:
-        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${key}: ${printValue}\n`;
+        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}  ${key}: ${printValue}`;
     }
   };
   return cb(tree);
