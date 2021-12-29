@@ -10,7 +10,7 @@ const formatData = (formatName, structure) => {
   } if (formatName === 'stylish') {
     return stylish(structure);
   }
-  return new Error('incorrect format!');
+  throw new Error(`incorrect format: ${formatName}!`);
 };
 
 export default formatData;
