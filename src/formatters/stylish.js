@@ -26,7 +26,7 @@ const stringify = (value, replacer = ' ', spaceCount = 1) => {
 
 const makeLine = (item, depth) => {
   if (item.type === 'nested') {
-    return `${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${item.name}: {\n`;
+    return `${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${item.key}: {\n`;
   }
   return '';
 };
@@ -34,7 +34,7 @@ const makeLine = (item, depth) => {
 const stylish = (tree) => {
   const cb = (data, result = '', depth = 0) => {
     const {
-      name, value, type, newValue, children,
+      key, value, type, newValue, children,
     } = data;
     const printValue = stringify(value, ' ', (depth + 1) * depthSpaceSize);
     const printNewValue = stringify(newValue, ' ', (depth + 1) * depthSpaceSize);
@@ -44,13 +44,13 @@ const stylish = (tree) => {
       case 'nested':
         return `${result}${children.map((item) => cb(item, makeLine(item, depth + 1), depth + 1)).join('')}${makeSpace(spaceSize * depth * spaceSize, '')}}\n`;
       case 'updated':
-        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printNewValue}\n`;
+        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${key}: ${printValue}\n${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${key}: ${printNewValue}\n`;
       case 'added':
-        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${name}: ${printValue}\n`;
+        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}+ ${key}: ${printValue}\n`;
       case 'removed':
-        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${name}: ${printValue}\n`;
+        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}- ${key}: ${printValue}\n`;
       default:
-        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${name}: ${printValue}\n`;
+        return `${result}${makeSpace(depthSpaceSize * (depth - 1) + spaceSize, '')}  ${key}: ${printValue}\n`;
     }
   };
   return cb(tree);

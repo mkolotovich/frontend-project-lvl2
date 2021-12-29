@@ -12,16 +12,16 @@ const printValue = (value) => {
 const plain = (tree) => {
   const cb = (node, result = '', path = '') => {
     const {
-      name, value, type, newValue, children,
+      key, value, type, newValue, children,
     } = node;
-    const nodeName = `${path}${name}`.slice(1);
+    const nodeName = `${path}${key}`.slice(1);
     const printedValue = printValue(value);
     const printedNewValue = printValue(newValue);
     switch (type) {
       case 'root':
-        return children.map((item) => cb(item, result, `${path}${name}.`)).join('\n');
+        return children.map((item) => cb(item, result, `${path}${key}.`)).join('\n');
       case 'nested':
-        return children.flatMap((item) => cb(item, result, `${path}${name}.`)).join('\n');
+        return children.flatMap((item) => cb(item, result, `${path}${key}.`)).join('\n');
       case 'added':
         return `${result}Property '${nodeName}' was added with value: ${printedValue}`;
       case 'removed':
