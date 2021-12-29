@@ -1,11 +1,10 @@
 import _ from 'lodash';
 import { isLeaf } from './stylish.js';
 
-const printValues = (value) => {
+const printValue = (value) => {
   const objValue = _.isObject(value) ? '[complex value]' : value;
   const strValue = typeof value === 'string' ? `'${value}'` : value;
-  const printValue = _.isObject(value) ? objValue : strValue;
-  return printValue;
+  return _.isObject(value) ? objValue : strValue;
 };
 
 const plain = (tree) => {
@@ -15,15 +14,15 @@ const plain = (tree) => {
     } = node;
     if (isLeaf(node)) {
       const nodeName = `${path}${name}`.slice(1);
-      const printValue = printValues(value);
-      const printNewValue = printValues(newValue);
+      const printedValue = printValue(value);
+      const printedNewValue = printValue(newValue);
       switch (type) {
         case 'added':
-          return `${result}Property '${nodeName}' was added with value: ${printValue}\n`;
+          return `${result}Property '${nodeName}' was added with value: ${printedValue}\n`;
         case 'removed':
           return `${result}Property '${nodeName}' was removed\n`;
         case 'updated':
-          return `${result}Property '${nodeName}' was updated. From ${printValue} to ${printNewValue}\n`;
+          return `${result}Property '${nodeName}' was updated. From ${printedValue} to ${printedNewValue}\n`;
         default:
           return '';
       }
