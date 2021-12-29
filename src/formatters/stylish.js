@@ -10,7 +10,7 @@ const makeSpace = (size, space) => {
   return space;
 };
 
-export const isLeaf = (node) => node.type !== 'nested';
+const isLeaf = (node) => node.type !== 'nested';
 
 const stringify = (value, replacer = ' ', spaceCount = 1) => {
   if (!_.isObject(value)) {
@@ -33,7 +33,7 @@ const makeLine = (item, depth) => {
   return '';
 };
 
-export const stylish = (tree) => {
+const stylish = (tree) => {
   const cb = (data, result = '', depth = 0) => {
     const {
       name, value, type, newValue, children,
@@ -58,3 +58,5 @@ export const stylish = (tree) => {
   };
   return cb(tree);
 };
+
+export default stylish;
