@@ -13,20 +13,6 @@ const makeNode = (name, children, type) => ({
   type,
 });
 
-const getValue = (node, file1, file2) => {
-  if (_.has(file1, node)) {
-    return _.get(file1, node);
-  }
-  return _.get(file2, node);
-};
-
-const makeLeaf = (name, file1, file2, type) => ({
-  name,
-  type,
-  value: getValue(name, file1, file2),
-  newValue: _.get(file2, name),
-});
-
 const makeTree = (keys, parsedData1, parsedData2) => keys.map((el) => {
   if (isValueObject(el, parsedData1, parsedData2)) {
     const subKeys1 = _.get(parsedData1, el);
@@ -36,14 +22,22 @@ const makeTree = (keys, parsedData1, parsedData2) => keys.map((el) => {
     return makeNode(el, makeTree(sortedKeys, subKeys1, subKeys2, []), 'nested');
   }
   if (_.get(parsedData1, el) === _.get(parsedData2, el)) {
-    return makeLeaf(el, parsedData1, parsedData2, 'unchanged');
+    return {
+      name: el, type: 'unchanged', value: parsedData1[el], newValue: parsedData2[el],
+    };
   } if (_.has(parsedData1, el) && _.has(parsedData2, el)
   && _.get(parsedData1, el) !== _.get(parsedData2, el)) {
-    return makeLeaf(el, parsedData1, parsedData2, 'updated');
+    return {
+      name: el, type: 'updated', value: parsedData1[el], newValue: parsedData2[el],
+    };
   } if (_.has(parsedData1, el)) {
-    return makeLeaf(el, parsedData1, parsedData2, 'removed');
+    return {
+      name: el, type: 'removed', value: parsedData1[el], newValue: parsedData2[el],
+    };
   }
-  return makeLeaf(el, parsedData1, parsedData2, 'added');
+  return {
+    name: el, type: 'added', value: parsedData2[el], newValue: parsedData1[el],
+  };
 });
 
 const buildTree = (parsedData1, parsedData2) => {

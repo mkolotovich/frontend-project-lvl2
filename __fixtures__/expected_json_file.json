@@ -7,8 +7,7 @@
         {
           "name": "follow",
           "type": "added",
-          "value": false,
-          "newValue": false
+          "value": false
         },
         {
           "name": "setting1",
@@ -30,16 +29,12 @@
         {
           "name": "setting4",
           "type": "added",
-          "value": "blah blah",
-          "newValue": "blah blah"
+          "value": "blah blah"
         },
         {
           "name": "setting5",
           "type": "added",
           "value": {
-            "key5": "value5"
-          },
-          "newValue": {
             "key5": "value5"
           }
         },
@@ -67,8 +62,7 @@
             {
               "name": "ops",
               "type": "added",
-              "value": "vops",
-              "newValue": "vops"
+              "value": "vops"
             }
           ],
           "type": "nested"
@@ -116,14 +110,6 @@
       "name": "group3",
       "type": "added",
       "value": {
-        "deep": {
-          "id": {
-            "number": 45
-          }
-        },
-        "fee": 100500
-      },
-      "newValue": {
         "deep": {
           "id": {
             "number": 45
