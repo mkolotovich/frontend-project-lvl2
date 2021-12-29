@@ -2,9 +2,12 @@ import _ from 'lodash';
 import { isLeaf } from './stylish.js';
 
 const printValue = (value) => {
-  const objValue = _.isObject(value) ? '[complex value]' : value;
-  const strValue = typeof value === 'string' ? `'${value}'` : value;
-  return _.isObject(value) ? objValue : strValue;
+  if (_.isObject(value)) {
+    return '[complex value]';
+  } if (typeof value === 'string') {
+    return `'${value}'`;
+  }
+  return value;
 };
 
 const plain = (tree) => {
