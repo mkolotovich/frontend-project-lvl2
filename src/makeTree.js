@@ -8,12 +8,12 @@ const isValueObject = (node, file1, file2) => {
 };
 
 const makeNode = (key, type, children, value, newValue) => {
-  const node = { key, type, children };
   if (type !== 'nested' && type !== 'root') {
-    node.value = value;
-    node.newValue = newValue;
+    return {
+      key, type, children, value, newValue,
+    };
   }
-  return node;
+  return { key, type, children };
 };
 
 const makeTree = (keys, parsedData1, parsedData2) => keys.map((el) => {
